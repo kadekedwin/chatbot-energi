@@ -1,8 +1,4 @@
-/**
- * 🚀 ENERNOVA REST API SERVER
- * Universal Backend for Web & Mobile Apps
- * Compatible: Next.js, React Native, Flutter
- */
+
 
 require('dotenv').config();
 const express = require('express');
@@ -12,38 +8,32 @@ const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 
-// Import routes
 const authRoutes = require('./routes/auth.routes');
 const chatRoutes = require('./routes/chat.routes');
 const journalRoutes = require('./routes/journal.routes');
 const uploadRoutes = require('./routes/upload.routes');
 
-// Import middleware
 const errorHandler = require('./middleware/error.middleware');
 const logger = require('./utils/logger');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// =============== SECURITY MIDDLEWARE ===============
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false
 }));
 
-// Rate limiting (prevent DDoS)
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: 'Too many requests from this IP, please try again later.'
 });
 app.use('/api/', limiter);
 
-// =============== CORS CONFIGURATION ===============
-// Allow multiple origins including production domain
 const allowedOrigins = [
   'http://localhost:3000',
-  'http://localhost:5000', 
+  'http://localhost:5000',
   'http://127.0.0.1:3000',
   'http://127.0.0.1:5000',
   'http://10.21.0.55:3000',
@@ -55,35 +45,31 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, Postman, etc.)
+
     if (!origin) return callback(null, true);
-    
-    // Allow all origins in development
+
     if (process.env.NODE_ENV !== 'production') {
       return callback(null, true);
     }
-    
-    // Check if origin is in allowed list
+
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(null, true); // Allow all for now, can be restricted later
+      callback(null, true);
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   exposedHeaders: ['Content-Length', 'X-JSON'],
-  maxAge: 86400 // 24 hours
+  maxAge: 86400
 }));
 
-// =============== BODY PARSERS ===============
 app.use(compression());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser());
 
-// =============== LOGGING ===============
 app.use((req, res, next) => {
   logger.info(`${req.method} ${req.path}`, {
     ip: req.ip,
@@ -92,7 +78,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// =============== HEALTH CHECK ===============
 app.get('/', (req, res) => {
   res.json({
     status: 'success',
@@ -117,13 +102,11 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// =============== API ROUTES ===============
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/journals', journalRoutes);
 app.use('/api/upload', uploadRoutes);
 
-// =============== 404 HANDLER ===============
 app.use((req, res) => {
   res.status(404).json({
     status: 'error',
@@ -132,16 +115,13 @@ app.use((req, res) => {
   });
 });
 
-// =============== ERROR HANDLER ===============
 app.use(errorHandler);
 
-// =============== START SERVER ===============
 const server = app.listen(PORT, '0.0.0.0', () => {
   const os = require('os');
   const networkInterfaces = os.networkInterfaces();
   const addresses = [];
-  
-  // Get all IPv4 addresses
+
   Object.keys(networkInterfaces).forEach((interfaceName) => {
     networkInterfaces[interfaceName].forEach((iface) => {
       if (iface.family === 'IPv4' && !iface.internal) {
@@ -149,19 +129,18 @@ const server = app.listen(PORT, '0.0.0.0', () => {
       }
     });
   });
-  
+
   logger.info(`🚀 EnerNova API Server running on port ${PORT}`);
   logger.info(`📱 Environment: ${process.env.NODE_ENV || 'development'}`);
   logger.info(`🌐 CORS Allowed Origins: ${allowedOrigins.join(', ')}`);
   logger.info(`📚 API Documentation: http://localhost:${PORT}/`);
   logger.info(`🔗 Local: http://localhost:${PORT}`);
-  
+
   if (addresses.length > 0) {
     logger.info(`🌍 Network: ${addresses.map(addr => `http://${addr}:${PORT}`).join(', ')}`);
   }
 });
 
-// =============== GRACEFUL SHUTDOWN ===============
 process.on('SIGTERM', () => {
   logger.info('SIGTERM signal received: closing HTTP server');
   server.close(() => {

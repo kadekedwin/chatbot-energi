@@ -1,9 +1,4 @@
-/**
- * AUTO-GENERATED JOURNAL DATABASE
- * Generated from PDF extraction (parse_jurnal.py)
- * Date: 2025-12-10 11:54:46
- * Total Journals: 51
- */
+
 
 export interface Journal {
   id: string;

@@ -1,13 +1,4 @@
-/**
- * 🔬 AUTO-GENERATED METADATA - HONEST EXTRACTION
- * Generated from PDF scanning (parse_jurnal.py v2.0)
- * Date: 2025-12-10 15:14:47
- * Total Journals: 48
- * 
- * ⚠️ PENTING: Data ini hasil ekstraksi OTOMATIS dari halaman pertama PDF.
- * Field "detectedAuthor" yang bernilai "Author Belum Terdeteksi" perlu
- * review manual oleh Admin untuk memastikan akurasi HKI.
- */
+
 
 export interface JournalMetadata {
   id: string;

@@ -1,7 +1,4 @@
-/**
- * TEST LOGIN API ENDPOINT
- * Test all 3 user roles login
- */
+
 
 const testLogin = async (email, password, expectedRole) => {
   console.log(`\n🧪 Testing login: ${email}`);
@@ -41,16 +38,12 @@ const testLogin = async (email, password, expectedRole) => {
   console.log('🚀 TESTING LOGIN ENDPOINTS');
   console.log('='.repeat(60));
 
-  // Test Admin
   await testLogin('admin@enernova.id', 'admin123', 'ADMIN');
-  
-  // Test Contributor
+
   await testLogin('kontributor@enernova.id', 'kontributor123', 'CONTRIBUTOR');
-  
-  // Test Researcher
+
   await testLogin('peneliti@enernova.id', 'peneliti123', 'RESEARCHER');
-  
-  // Test Invalid Credentials
+
   console.log(`\n🧪 Testing invalid credentials`);
   await testLogin('admin@enernova.id', 'wrongpassword', 'ADMIN');
 

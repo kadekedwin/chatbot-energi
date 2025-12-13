@@ -252,8 +252,7 @@ export default function AdminDashboard() {
         alert('Error: ' + result.error);
         return;
       }
-      
-      // Show success notification with animation
+
       const notification = document.createElement('div');
       notification.innerHTML = `
         <div style="
@@ -314,8 +313,7 @@ export default function AdminDashboard() {
           alert('Error: ' + result.error);
           return;
         }
-        
-        // Show rejection notification
+
         const notification = document.createElement('div');
         notification.innerHTML = `
           <div style="
@@ -617,7 +615,7 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        {/* Author Catalog Section */}
+        {}
         <Card className="shadow-xl border-2 border-purple-100">
           <CardHeader className="border-b bg-gradient-to-r from-purple-50 to-indigo-50">
             <CardTitle className="flex items-center gap-2 text-purple-700">

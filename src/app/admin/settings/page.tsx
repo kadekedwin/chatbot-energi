@@ -17,7 +17,7 @@ export default function SettingsPage() {
   });
 
   const handleSave = () => {
-    // Create success notification
+    
     const notification = document.createElement('div');
     notification.style.cssText = `
       position: fixed;
@@ -45,8 +45,7 @@ export default function SettingsPage() {
         <div style="font-size: 0.875rem; margin-top: 2px;">Semua pengaturan telah diperbarui</div>
       </div>
     `;
-    
-    // Add animation keyframes
+
     const style = document.createElement('style');
     style.textContent = `
       @keyframes slideIn {
@@ -73,8 +72,7 @@ export default function SettingsPage() {
     document.head.appendChild(style);
     
     document.body.appendChild(notification);
-    
-    // Auto-remove after 3 seconds
+
     setTimeout(() => {
       notification.style.animation = 'slideOut 0.3s ease-in';
       setTimeout(() => notification.remove(), 300);
@@ -94,7 +92,7 @@ export default function SettingsPage() {
           </p>
         </div>
 
-        {/* General Settings */}
+        {}
         <Card className="shadow-xl border-2 border-emerald-100">
           <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50">
             <CardTitle className="flex items-center gap-2 text-emerald-700">
@@ -130,7 +128,7 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* API Settings */}
+        {}
         <Card className="shadow-xl border-2 border-emerald-100">
           <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50">
             <CardTitle className="flex items-center gap-2 text-emerald-700">
@@ -160,7 +158,7 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Upload Settings */}
+        {}
         <Card className="shadow-xl border-2 border-emerald-100">
           <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50">
             <CardTitle className="flex items-center gap-2 text-emerald-700">
@@ -202,7 +200,7 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Notifications */}
+        {}
         <Card className="shadow-xl border-2 border-emerald-100">
           <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50">
             <CardTitle className="flex items-center gap-2 text-emerald-700">
@@ -232,7 +230,7 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Save Button */}
+        {}
         <div className="flex justify-end">
           <Button 
             onClick={handleSave}

@@ -7,7 +7,6 @@ const prisma = new PrismaClient({
     : ['error'],
 });
 
-// Lazy connection - only connect when needed
 let isConnected = false;
 
 const connectDB = async () => {
@@ -24,7 +23,6 @@ const connectDB = async () => {
   return prisma;
 };
 
-// Graceful shutdown
 process.on('beforeExit', async () => {
   if (isConnected) {
     await prisma.$disconnect();
@@ -32,5 +30,4 @@ process.on('beforeExit', async () => {
   }
 });
 
-// Export prisma instance (will connect on first use)
 module.exports = prisma;

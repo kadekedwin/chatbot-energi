@@ -5,7 +5,6 @@ import { getAllJournals, getJournalByTopic } from '@/lib/journal-database';
 export const maxDuration = 30;
 export const dynamic = 'force-dynamic';
 
-// Detect if question is academic or general
 function detectQuestionType(message: string): 'academic' | 'general' | 'hybrid' {
   const academicKeywords = [
     'jurnal', 'penelitian', 'riset', 'studi', 'data', 'statistik',
@@ -18,8 +17,7 @@ function detectQuestionType(message: string): 'academic' | 'general' | 'hybrid' 
   
   const messageLower = message.toLowerCase();
   const hasAcademicKeywords = academicKeywords.some(kw => messageLower.includes(kw));
-  
-  // Check if asking for general knowledge
+
   const generalPatterns = [
     /^(apa|siapa|bagaimana|mengapa|kapan|dimana)/i,
     /cara (membuat|menggunakan|kerja)/i,
@@ -40,13 +38,10 @@ function detectQuestionType(message: string): 'academic' | 'general' | 'hybrid' 
 export async function POST(req: Request) {
   const { message } = await req.json();
 
-  // Detect question type
   const questionType = detectQuestionType(message);
-  
-  // Get all journals untuk context AI
+
   const allJournals = getAllJournals();
-  
-  // Build comprehensive knowledge base with download links
+
   const journalContext = allJournals.map((j, index) => 
     `[${index + 1}] **${j.title}** 
     📅 Tahun: ${j.year} | 👤 Penulis: ${j.authors}
@@ -56,13 +51,12 @@ export async function POST(req: Request) {
     `
   ).join('\n---\n');
 
-  // BARU: Ambil journals dari store untuk DOI dan PDF URL
   const storeJournals = allJournals.map((j, index) => ({
     ref: index + 1,
     title: j.title,
     author: j.authors,
     year: j.year,
-    doi: `10.xxxx/enernova.${j.year}.${String(index + 1).padStart(3, '0')}`, // Generate DOI
+    doi: `10.xxxx/enernova.${j.year}.${String(index + 1).padStart(3, '0')}`, 
     pdfUrl: `https://enernova.vercel.app/journals/${j.filename}`
   }));
 
@@ -70,7 +64,6 @@ export async function POST(req: Request) {
     apiKey: process.env.GROQ_API_KEY,
   });
 
-  // Unified system prompt (Perfectionist Style)
   const SYSTEM_PROMPT = `
 PERAN UTAMA:
 Kamu adalah "EnerNova AI", Konsultan Senior Energi & Hilirisasi Nikel. Gaya bicaramu: Profesional, Data-Driven, namun mudah dipahami (seperti Dosen menjelaskan ke Mahasiswa).
@@ -231,7 +224,7 @@ LFP adalah baterai lithium-ion dengan katoda **LiFePO₄** (besi fosfat). Menuru
       CATATAN: Untuk pertanyaan mendalam tentang energi terbarukan, nikel, atau baterai, 
       sarankan user untuk bertanya lebih spesifik agar saya bisa mengakses database jurnal.
     `;
-  } else { // hybrid
+  } else { 
     systemPrompt = `
       MODE: HYBRID (Prioritas Jurnal + General Knowledge Backup)
       
@@ -290,7 +283,7 @@ LFP adalah baterai lithium-ion dengan katoda **LiFePO₄** (besi fosfat). Menuru
         { role: 'system', content: systemPrompt },
         { role: 'user', content: message }
       ],
-      temperature: questionType === 'academic' ? 0.3 : 0.7, // Adaptive temperature
+      temperature: questionType === 'academic' ? 0.3 : 0.7, 
     });
 
     return Response.json({ 

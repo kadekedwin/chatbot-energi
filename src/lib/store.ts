@@ -33,7 +33,7 @@ interface ChatMessage {
 }
 
 interface AppState {
-  // Journal Management
+  
   journals: Journal[];
   isLoadingJournals: boolean;
   journalsError: string | null;
@@ -41,13 +41,11 @@ interface AppState {
   addJournal: (journal: Partial<Journal>) => Promise<{ success: boolean; error?: string }>;
   updateJournalStatus: (id: string, status: string) => Promise<{ success: boolean; error?: string }>;
   deleteJournal: (id: string) => Promise<{ success: boolean; error?: string }>;
-  
-  // Chat History
+
   chatHistory: ChatMessage[];
   addChatMessage: (message: ChatMessage) => void;
   clearChatHistory: () => void;
-  
-  // UI State
+
   sidebarOpen: boolean;
   toggleSidebar: () => void;
 }
@@ -55,20 +53,19 @@ interface AppState {
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
-      // Initial State
+      
       journals: [],
       isLoadingJournals: false,
       journalsError: null,
       
       chatHistory: [],
       sidebarOpen: true,
-      
-      // Actions
+
       fetchJournals: async (params) => {
         set({ isLoadingJournals: true, journalsError: null });
         try {
           const response = await journalAPI.getAll(params);
-          // Backend returns: { status: 'success', data: { journals: [...], pagination: {...} } }
+          
           const journals = response.data?.journals || [];
           console.log('📚 Fetched journals from API:', journals.length);
           set({ 
@@ -80,7 +77,7 @@ export const useAppStore = create<AppState>()(
           set({ 
             journalsError: handleAPIError(error), 
             isLoadingJournals: false,
-            journals: [] // Clear journals on error
+            journals: [] 
           });
         }
       },
@@ -148,7 +145,7 @@ export const useAppStore = create<AppState>()(
       partialize: (state) => ({ 
         chatHistory: state.chatHistory,
         sidebarOpen: state.sidebarOpen
-        // Don't persist journals, always fetch from API
+        
       }),
     }
   )

@@ -39,7 +39,6 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
 
-    // Validation
     if (!credentials.email || !credentials.password) {
       setError('Email dan password harus diisi');
       setIsLoading(false);
@@ -48,22 +47,19 @@ export default function LoginPage() {
 
     try {
       console.log('🔐 Attempting login with AuthContext...', { email: credentials.email });
-      
-      // Use AuthContext login method
+
       const result = await authLogin(credentials.email, credentials.password);
       
       if (result.success) {
         console.log('✅ Login successful! Getting user data from localStorage...');
-        
-        // Get user from localStorage to determine role
+
         const userStr = localStorage.getItem('user');
         if (userStr) {
           const user = JSON.parse(userStr);
           const role = user.role.toUpperCase();
           
           console.log('🔄 Redirecting based on role:', role);
-          
-          // Redirect berdasarkan role
+
           if (role === 'ADMIN') {
             console.log('→ Redirecting to /admin/dashboard');
             router.push('/admin/dashboard');
@@ -114,14 +110,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center p-4 relative overflow-hidden">
       
-      {/* Animated Background Effect */}
+      {}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.08),transparent_60%)]"></div>
       <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-200/30 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-200/30 rounded-full blur-3xl"></div>
       
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center relative z-10">
         
-        {/* Left Section - Branding */}
+        {}
         <div className="hidden lg:block space-y-8 p-8">
           <div className="flex items-center gap-4">
             <div className="bg-gradient-to-br from-emerald-600 to-teal-600 p-4 rounded-2xl shadow-2xl shadow-emerald-600/40">
@@ -186,7 +182,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Right Section - Login Form */}
+        {}
         <Card className="shadow-2xl border-2 border-emerald-100 overflow-hidden bg-white">
           <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-600"></div>
           
@@ -207,7 +203,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-5">
               
-              {/* Email Input */}
+              {}
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-slate-700 flex items-center gap-2">
                   <Mail className="w-4 h-4 text-emerald-600" />
@@ -226,7 +222,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              {/* Password Input */}
+              {}
               <div className="space-y-2">
                 <label htmlFor="password" className="text-sm font-medium text-slate-700 flex items-center gap-2">
                   <Lock className="w-4 h-4 text-emerald-600" />
@@ -254,7 +250,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Error Message */}
+              {}
               {error && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
@@ -262,14 +258,14 @@ export default function LoginPage() {
                 </div>
               )}
 
-              {/* Demo Credentials Info */}
+              {}
               <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl p-4 space-y-3">
                 <p className="text-xs font-bold text-emerald-800 mb-2 flex items-center gap-2">
                   <Zap className="w-4 h-4" />
                   🚀 Demo Access - 3 Role Tersedia:
                 </p>
                 <div className="space-y-2">
-                  {/* Admin */}
+                  {}
                   <div className="bg-white rounded-lg p-3 border border-purple-200">
                     <div className="flex justify-between items-center mb-1">
                       <div className="flex items-center gap-2">
@@ -291,7 +287,7 @@ export default function LoginPage() {
                     <p className="text-[9px] text-slate-500 pl-6 mt-1">Full access: Dashboard, Approve/Reject, Manage Users</p>
                   </div>
                   
-                  {/* Kontributor */}
+                  {}
                   <div className="bg-white rounded-lg p-3 border border-amber-200">
                     <div className="flex justify-between items-center mb-1">
                       <div className="flex items-center gap-2">
@@ -313,7 +309,7 @@ export default function LoginPage() {
                     <p className="text-[9px] text-slate-500 pl-6 mt-1">Upload jurnal (multiple), Track status approval</p>
                   </div>
                   
-                  {/* User */}
+                  {}
                   <div className="bg-white rounded-lg p-3 border border-emerald-200">
                     <div className="flex justify-between items-center mb-1">
                       <div className="flex items-center gap-2">
@@ -340,7 +336,7 @@ export default function LoginPage() {
                 </p>
               </div>
 
-              {/* Submit Button */}
+              {}
               <Button 
                 type="submit" 
                 className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold shadow-lg shadow-emerald-600/40 hover:shadow-xl transition-all duration-300"

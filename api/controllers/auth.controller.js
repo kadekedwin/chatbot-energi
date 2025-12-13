@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const prisma = require('../config/database');
 const logger = require('../utils/logger');
 
-// Generate JWT Token
 const generateToken = (user) => {
   return jwt.sign(
     { 
@@ -16,20 +15,17 @@ const generateToken = (user) => {
   );
 };
 
-// Register new user
 exports.register = async (req, res, next) => {
   try {
     const { name, email, password, role } = req.body;
-    
-    // Validate input
+
     if (!name || !email || !password) {
       return res.status(400).json({
         status: 'error',
         message: 'Please provide name, email and password'
       });
     }
-    
-    // Check if user exists
+
     const existingUser = await prisma.user.findUnique({
       where: { email }
     });
@@ -40,11 +36,9 @@ exports.register = async (req, res, next) => {
         message: 'User with this email already exists'
       });
     }
-    
-    // Hash password
+
     const hashedPassword = await bcrypt.hash(password, 12);
-    
-    // Create user
+
     const user = await prisma.user.create({
       data: {
         name,
@@ -60,8 +54,7 @@ exports.register = async (req, res, next) => {
         createdAt: true
       }
     });
-    
-    // Generate token
+
     const token = generateToken(user);
     
     logger.info(`New user registered: ${email}`);
@@ -76,20 +69,17 @@ exports.register = async (req, res, next) => {
   }
 };
 
-// Login user
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    
-    // Validate input
+
     if (!email || !password) {
       return res.status(400).json({
         status: 'error',
         message: 'Please provide email and password'
       });
     }
-    
-    // Find user
+
     const user = await prisma.user.findUnique({
       where: { email }
     });
@@ -100,8 +90,7 @@ exports.login = async (req, res, next) => {
         message: 'Invalid email or password'
       });
     }
-    
-    // Check password
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     
     if (!isPasswordValid) {
@@ -110,16 +99,14 @@ exports.login = async (req, res, next) => {
         message: 'Invalid email or password'
       });
     }
-    
-    // Generate token
+
     const token = generateToken(user);
-    
-    // Set cookie
+
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000 
     });
     
     logger.info(`User logged in: ${email}`);
@@ -142,7 +129,6 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// Logout user
 exports.logout = (req, res) => {
   res.clearCookie('token');
   res.json({
@@ -151,7 +137,6 @@ exports.logout = (req, res) => {
   });
 };
 
-// Get current user
 exports.me = async (req, res, next) => {
   try {
     const user = await prisma.user.findUnique({

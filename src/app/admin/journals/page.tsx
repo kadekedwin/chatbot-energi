@@ -38,11 +38,9 @@ export default function JournalsPage() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    // If single file, open modal for metadata
     if (files.length === 1) {
       const file = files[0];
-      
-      // Auto-extract metadata from file content
+
       const reader = new FileReader();
       reader.onload = (event) => {
         const content = event.target?.result as string;
@@ -80,14 +78,12 @@ export default function JournalsPage() {
       return;
     }
 
-    // Multiple files - quick upload with basic info
     setIsUploading(true);
     
     let successCount = 0;
     let failCount = 0;
     const totalFiles = files.length;
 
-    // Process multiple files
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       
@@ -98,8 +94,7 @@ export default function JournalsPage() {
           reader.onload = async (event) => {
             try {
               const fileContent = event.target?.result as string;
-              
-              // Auto-extract metadata
+
               const extracted = extractJournalMetadata(fileContent || '');
               
               const newJournal = {
@@ -131,16 +126,14 @@ export default function JournalsPage() {
             reject(new Error('File read error'));
           };
 
-          // Read file as text
           reader.readAsText(file);
         });
       } catch (error) {
-        // Error already logged, continue with next file
+        
         continue;
       }
     }
-    
-    // Show summary notification
+
     const message = `✅ Upload Selesai!\n\n` +
       `Total: ${totalFiles} file(s)\n` +
       `Berhasil: ${successCount} file(s) dengan status APPROVED (Hijau) ✅\n` +
@@ -149,7 +142,7 @@ export default function JournalsPage() {
     alert(message);
     
     setIsUploading(false);
-    e.target.value = ''; // Reset input
+    e.target.value = ''; 
   };
 
   const handleSubmitWithMetadata = async () => {
@@ -183,8 +176,7 @@ export default function JournalsPage() {
 
         await addJournal(newJournal);
         alert(`✅ Jurnal "${uploadFormData.title}" berhasil diupload!\n\nPenulis: ${uploadFormData.author}\nInstitusi: ${uploadFormData.authorInstitution}`);
-        
-        // Reset form
+
         setUploadFormData({
           title: '',
           author: '',
@@ -254,7 +246,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
   const handleDownload = (id: string) => {
     const journal = journals.find(j => j.id === id);
     if (journal) {
-      // Create a blob and download
+      
       const blob = new Blob([journal.contentPreview || 'No content'], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -272,7 +264,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         
-        {/* Header */}
+        {}
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-700 to-teal-600 bg-clip-text text-transparent">
@@ -283,7 +275,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
             </p>
           </div>
           
-          {/* Upload Button */}
+          {}
           <div>
             <input
               type="file"
@@ -321,7 +313,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
           </div>
         </div>
 
-        {/* Stats Cards */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="border-emerald-200">
             <CardContent className="p-4">
@@ -355,7 +347,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
           </Card>
         </div>
 
-        {/* Search & Filter */}
+        {}
         <Card className="border-emerald-100">
           <CardContent className="p-4">
             <div className="flex gap-4">
@@ -406,7 +398,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
           </CardContent>
         </Card>
 
-        {/* Journals List */}
+        {}
         <Card className="shadow-xl border-2 border-emerald-100">
           <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50">
             <CardTitle className="flex items-center gap-2 text-emerald-700">
@@ -499,7 +491,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
 
       </div>
 
-      {/* Upload Metadata Modal */}
+      {}
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -512,7 +504,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Judul */}
+              {}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Judul Jurnal <span className="text-red-500">*</span>
@@ -525,7 +517,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
                 />
               </div>
 
-              {/* Penulis Asli */}
+              {}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Penulis Asli <span className="text-red-500">*</span>
@@ -539,7 +531,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
                 <p className="text-xs text-gray-500 mt-1">Format: Nama Belakang, Inisial depan</p>
               </div>
 
-              {/* Institusi */}
+              {}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Institusi / Afiliasi
@@ -552,7 +544,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
                 />
               </div>
 
-              {/* Tahun Publikasi */}
+              {}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Tahun Publikasi
@@ -568,7 +560,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
                 />
               </div>
 
-              {/* Sumber Jurnal */}
+              {}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Nama Jurnal / Conference
@@ -581,7 +573,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
                 />
               </div>
 
-              {/* DOI */}
+              {}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   DOI (Digital Object Identifier)
@@ -595,7 +587,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
                 <p className="text-xs text-gray-500 mt-1">Format: 10.xxxx/xxxx</p>
               </div>
 
-              {/* PDF URL */}
+              {}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Link Download PDF (Optional)
@@ -610,7 +602,7 @@ ${journal.contentPreview ? journal.contentPreview.substring(0, 300) + '...' : 'N
                 <p className="text-xs text-gray-500 mt-1">User dapat download dari link ini</p>
               </div>
 
-              {/* Action Buttons */}
+              {}
               <div className="flex gap-3 pt-4">
                 <Button
                   onClick={handleSubmitWithMetadata}

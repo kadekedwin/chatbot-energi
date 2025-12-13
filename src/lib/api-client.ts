@@ -1,18 +1,15 @@
 import axios, { AxiosError } from 'axios';
 
-// API Configuration
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
-// Create axios instance
 export const apiClient = axios.create({
   baseURL: `${API_URL}/api`,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Enable cookies for JWT
+  withCredentials: true, 
 });
 
-// Request interceptor - Add token to headers
 apiClient.interceptors.request.use(
   (config: any) => {
     const token = localStorage.getItem('token');
@@ -26,12 +23,11 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor - Handle errors
 apiClient.interceptors.response.use(
   (response: any) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
+      
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       if (typeof window !== 'undefined') {
@@ -42,7 +38,6 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Auth API
 export const authAPI = {
   register: async (name: string, email: string, password: string) => {
     const response = await apiClient.post('/auth/register', { name, email, password });
@@ -51,7 +46,7 @@ export const authAPI = {
 
   login: async (email: string, password: string) => {
     const response = await apiClient.post('/auth/login', { email, password });
-    const { data } = response.data; // Extract nested data
+    const { data } = response.data; 
     if (data && data.token) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -74,7 +69,6 @@ export const authAPI = {
   },
 };
 
-// Journal API
 export const journalAPI = {
   getAll: async (params?: { status?: string; search?: string; page?: number; limit?: number }) => {
     const response = await apiClient.get('/journals', { params });
@@ -118,7 +112,6 @@ export const journalAPI = {
   },
 };
 
-// Chat API
 export const chatAPI = {
   sendMessage: async (message: string, conversationHistory?: any[]) => {
     const response = await apiClient.post('/chat', { 
@@ -129,7 +122,6 @@ export const chatAPI = {
   },
 };
 
-// Upload API
 export const uploadAPI = {
   uploadJournal: async (file: File) => {
     const formData = new FormData();
@@ -144,7 +136,6 @@ export const uploadAPI = {
   },
 };
 
-// Helper function to handle API errors
 export const handleAPIError = (error: any): string => {
   if (axios.isAxiosError(error)) {
     return error.response?.data?.error || error.message || 'An error occurred';

@@ -3,7 +3,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 
-// Data Potensi Energi Terbarukan Indonesia (dari jurnal)
 const renewableEnergyData = [
   { name: 'Solar PV', potential: 207, unit: 'GW', color: '#f59e0b' },
   { name: 'Wind', potential: 155, unit: 'GW', color: '#06b6d4' },
@@ -12,7 +11,6 @@ const renewableEnergyData = [
   { name: 'Biomass', potential: 32, unit: 'GW', color: '#22c55e' },
 ];
 
-// Data Produksi Nikel Indonesia (ton/tahun)
 const nickelProductionData = [
   { year: '2020', production: 760000, investment: 5 },
   { year: '2021', production: 1000000, investment: 8 },
@@ -22,7 +20,6 @@ const nickelProductionData = [
   { year: '2025', production: 2400000, investment: 35 },
 ];
 
-// Data Perbandingan Baterai NMC vs LFP
 const batteryComparisonData = [
   { metric: 'Energy Density', NMC: 270, LFP: 160, unit: 'Wh/kg' },
   { metric: 'Cycle Life', NMC: 1500, LFP: 4000, unit: 'cycles' },
@@ -31,7 +28,6 @@ const batteryComparisonData = [
   { metric: 'Fast Charging', NMC: 9, LFP: 7, unit: '/10' },
 ];
 
-// Data Environmental Impact Nickel Smelting
 const environmentalImpactData = [
   { category: 'CO2 Emissions', value: 35, target: 20 },
   { category: 'Water Usage', value: 68, target: 50 },

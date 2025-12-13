@@ -19,7 +19,7 @@ export default function ContributorLayout({ children }: { children: React.ReactN
   return (
     <ProtectedRoute>
       <div className="flex h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-        {/* Sidebar */}
+        {}
         <aside className="w-64 bg-white border-r border-emerald-100 shadow-lg flex flex-col">
           <div className="p-6 border-b border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50">
             <div className="flex items-center gap-3">
@@ -33,7 +33,7 @@ export default function ContributorLayout({ children }: { children: React.ReactN
             </div>
           </div>
           
-          {/* User Info */}
+          {}
           <div className="p-4 border-b border-emerald-100 bg-gradient-to-r from-amber-50 to-yellow-50">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center text-white shadow-md">
@@ -46,7 +46,7 @@ export default function ContributorLayout({ children }: { children: React.ReactN
             </div>
           </div>
           
-          {/* Navigation Menu */}
+          {}
           <nav className="flex-1 p-4 space-y-2">
             <Link href="/">
               <Button
@@ -80,7 +80,7 @@ export default function ContributorLayout({ children }: { children: React.ReactN
             </div>
           </nav>
           
-          {/* Logout Button */}
+          {}
           <div className="p-4 border-t border-emerald-100">
             <Button
               onClick={logout}
@@ -93,7 +93,7 @@ export default function ContributorLayout({ children }: { children: React.ReactN
           </div>
         </aside>
 
-        {/* Main Content */}
+        {}
         <main className="flex-1 overflow-y-auto">
           {children}
         </main>

@@ -1,7 +1,4 @@
-/**
- * FULL LOGIN FLOW TEST
- * Test login → save to localStorage → verify dashboard access
- */
+
 
 const testLoginFlow = async () => {
   console.log('='.repeat(60));
@@ -38,13 +35,11 @@ const testLoginFlow = async () => {
       
       const token = loginData.data.token;
       const user = loginData.data.user;
-      
-      // Simulate localStorage
+
       console.log(`\n2️⃣ Simulating localStorage...`);
       console.log(`   ✅ Saved token`);
       console.log(`   ✅ Saved user data`);
-      
-      // Test /me endpoint
+
       console.log(`\n3️⃣ Testing /me endpoint with token...`);
       const meResponse = await fetch('http://localhost:5000/api/auth/me', {
         method: 'GET',
@@ -62,8 +57,7 @@ const testLoginFlow = async () => {
       } else {
         console.log(`❌ /me endpoint FAILED: ${meResponse.status}`);
       }
-      
-      // Test journals endpoint (dashboard data)
+
       console.log(`\n4️⃣ Testing /journals endpoint...`);
       const journalsResponse = await fetch('http://localhost:5000/api/journals', {
         method: 'GET',
@@ -82,8 +76,7 @@ const testLoginFlow = async () => {
       } else {
         console.log(`❌ Journals endpoint FAILED: ${journalsResponse.status}`);
       }
-      
-      // Determine redirect
+
       console.log(`\n5️⃣ Determining redirect...`);
       const role = user.role.toUpperCase();
       let redirectUrl = '/';
