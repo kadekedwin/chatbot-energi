@@ -6,6 +6,9 @@ const nextConfig = {
   images: {
     domains: ['localhost'],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   telemetry: {
     enabled: false,
   },

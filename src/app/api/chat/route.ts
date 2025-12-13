@@ -232,7 +232,7 @@ LFP adalah baterai lithium-ion dengan katoda **LiFePO₄** (besi fosfat). Menuru
       sarankan user untuk bertanya lebih spesifik agar saya bisa mengakses database jurnal.
     `;
   } else { // hybrid
-      
+    systemPrompt = `
       MODE: HYBRID (Prioritas Jurnal + General Knowledge Backup)
       
       BASIS DATA JURNAL (57 JURNAL):
@@ -281,8 +281,6 @@ LFP adalah baterai lithium-ion dengan katoda **LiFePO₄** (besi fosfat). Menuru
       - Data-driven + context-aware
       - Nada percaya diri untuk fakta 2025
     `;
-  } else { // hybrid
-    systemPrompt = SYSTEM_PROMPT; // Use unified prompt
   }
 
   try {
