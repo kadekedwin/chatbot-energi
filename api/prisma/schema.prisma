@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
+  role      String    @default("CONTRIBUTOR")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  journals  Journal[]
+  
+  @@map("users")
+}
+
+model Journal {
+  id                String   @id @default(uuid())
+  filename          String
+  title             String
+  detectedAuthor    String
+  authorInstitution String   @default("Not specified")
+  publicationYear   String?
+  journalSource     String   @default("Unknown")
+  doi               String?
+  pdfUrl            String
+  uploadDate        DateTime @default(now())
+  status            String   @default("PENDING")
+  fileSize          String
+  contentPreview    String?
+  
+  uploader          User     @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  uploaderId        String
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([detectedAuthor])
+  @@index([status])
+  @@index([uploaderId])
+  @@index([title])
+  @@map("journals")
+}
