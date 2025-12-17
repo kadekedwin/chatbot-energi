@@ -38,7 +38,6 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
     );
   }
 
-  // If not loading and no user, or if role doesn't match, prevent rendering children
   if (!user || (requireAdmin && user.role.toLowerCase() !== 'admin')) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50">

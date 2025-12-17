@@ -2,7 +2,6 @@ const axios = require('axios');
 const logger = require('../utils/logger');
 const prisma = require('../config/database');
 
-// HYBRID RAG SYSTEM - Fast & Accurate
 exports.sendMessage = async (req, res, next) => {
   try {
     const { message, conversationHistory } = req.body;
@@ -13,9 +12,7 @@ exports.sendMessage = async (req, res, next) => {
         message: 'Message is required'
       });
     }
-    
-    // 1. FAST RETRIEVAL - Get relevant journals from database
-    // SQLite doesn't support case-insensitive LIKE natively, so we search directly
+
     const searchLower = message.toLowerCase();
     const journals = await prisma.journal.findMany({
       where: {
@@ -26,7 +23,7 @@ exports.sendMessage = async (req, res, next) => {
           { contentPreview: { contains: searchLower } }
         ]
       },
-      take: 5, // Limit untuk performance
+      take: 5, 
       select: {
         title: true,
         detectedAuthor: true,
@@ -36,8 +33,7 @@ exports.sendMessage = async (req, res, next) => {
         doi: true
       }
     });
-    
-    // 2. Build context dari retrieved journals
+
     let contextInfo = '';
     if (journals.length > 0) {
       contextInfo = '\n\n🔬 **KONTEKS DARI DATABASE JURNAL:**\n';
@@ -49,8 +45,7 @@ exports.sendMessage = async (req, res, next) => {
       });
       contextInfo += '\n\n';
     }
-    
-    // 3. OPTIMIZED SYSTEM PROMPT - Eco-Futurist + RAG
+
     const systemPrompt = `Kamu adalah **EnerNova AI**, asisten Eco-Futurist yang sangat ahli dalam:
 🔋 Energi Terbarukan Indonesia (Solar, Wind, Hydro, Geothermal)
 ⚡ Teknologi Baterai (LFP vs NMC, Lithium-ion, Solid-state)
@@ -72,7 +67,6 @@ exports.sendMessage = async (req, res, next) => {
 ✅ Bahasa Indonesia profesional namun friendly
 ✅ Maksimal 500 kata untuk kecepatan`;
 
-    // 4. Build messages array dengan history
     const messages = [
       { role: 'system', content: systemPrompt },
       ...(conversationHistory || []),
@@ -81,15 +75,14 @@ exports.sendMessage = async (req, res, next) => {
         content: contextInfo + message 
       }
     ];
-    
-    // 5. CALL GROQ API - Ultra Fast & Free!
+
     const response = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
       {
-        model: 'llama-3.3-70b-versatile', // Fast, powerful, free!
+        model: 'llama-3.3-70b-versatile', 
         messages: messages,
         temperature: 0.7,
-        max_tokens: 800, // Reduced untuk kecepatan
+        max_tokens: 800, 
         top_p: 0.9
       },
       {
@@ -97,7 +90,7 @@ exports.sendMessage = async (req, res, next) => {
           'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
           'Content-Type': 'application/json'
         },
-        timeout: 15000 // 15 second timeout
+        timeout: 15000 
       }
     );
     

@@ -8,8 +8,11 @@ RUN apk add --no-cache openssl libc6-compat
 # Copy package files
 COPY package*.json ./
 
+# Copy Prisma schema (needed for postinstall script)
+COPY prisma ./prisma
+
 # Install dependencies
-RUN npm ci --only=production
+RUN npm install --omit=dev
 
 # Stage 2: Builder
 FROM node:18-alpine AS builder

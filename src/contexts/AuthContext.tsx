@@ -23,10 +23,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Start with loading state
+  const [isLoading, setIsLoading] = useState(true); 
   const router = useRouter();
 
-  // Load user dari localStorage saat pertama kali
   useEffect(() => {
     try {
       const storedToken = localStorage.getItem('token');
@@ -38,11 +37,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error("Failed to parse auth data from localStorage", error);
-      // Clear corrupted data
+      
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     } finally {
-      setIsLoading(false); // Finished loading from storage
+      setIsLoading(false); 
     }
   }, []);
 
@@ -51,17 +50,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     try {
       const response = await authAPI.login(email, password);
-      
-      // Backend returns: { status: 'success', data: { user, token } }
+
       if (response.status === 'success' && response.data && response.data.user) {
         const userData = response.data.user;
         const token = response.data.token;
-        
-        // Save to localStorage
+
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(userData));
-        
-        // Set user in context
+
         setUser(userData);
         setIsLoading(false);
         return { success: true };
@@ -82,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
-      // Clear state and storage
+      
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       setUser(null);
@@ -91,7 +87,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Do not render children until the loading from localStorage is complete
   if (isLoading) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50">

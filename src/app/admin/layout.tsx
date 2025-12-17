@@ -26,10 +26,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <ProtectedRoute requireAdmin={true}>
       <div className="flex h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
+<<<<<<< HEAD
         {/* Sidebar dengan state isOpen */}
         <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
           {/* Header Sidebar - Hidden di mobile karena ada MobileHeader */}
           <div className="hidden lg:block p-6 border-b border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50">
+=======
+        {}
+        <aside className="w-64 bg-white border-r border-emerald-100 shadow-lg flex flex-col">
+          <div className="p-6 border-b border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50">
+>>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
             <div className="flex items-center gap-3">
               <div className="bg-gradient-to-br from-emerald-600 to-teal-500 p-3 rounded-xl shadow-lg">
                 <Leaf className="w-7 h-7 text-white" />
@@ -41,7 +47,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </div>
           
-          {/* User Info */}
+          {}
           <div className="p-4 border-b border-emerald-100 bg-emerald-50/50">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white font-semibold shadow-md">
@@ -104,6 +110,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </Sidebar>
 
+<<<<<<< HEAD
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Mobile Header dengan Hamburger */}
@@ -118,6 +125,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             {children}
           </main>
         </div>
+=======
+        {}
+        <main className="flex-1 overflow-y-auto">
+          {children}
+        </main>
+>>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
       </div>
     </ProtectedRoute>
   );

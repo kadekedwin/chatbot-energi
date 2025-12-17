@@ -6,14 +6,12 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
-  // Check if users already exist
   const existingUsers = await prisma.user.count();
   if (existingUsers > 0) {
     console.log('⚠️  Database already seeded. Skipping...');
     return;
   }
 
-  // Create Admin User
   const adminPassword = await bcrypt.hash('admin123', 10);
   const admin = await prisma.user.create({
     data: {
@@ -25,7 +23,6 @@ async function main() {
   });
   console.log('✅ Created admin user:', admin.email);
 
-  // Create Contributor User
   const contributorPassword = await bcrypt.hash('kontributor123', 10);
   const contributor = await prisma.user.create({
     data: {
@@ -37,7 +34,6 @@ async function main() {
   });
   console.log('✅ Created contributor user:', contributor.email);
 
-  // Create Researcher User
   const researcherPassword = await bcrypt.hash('peneliti123', 10);
   const researcher = await prisma.user.create({
     data: {
@@ -49,7 +45,6 @@ async function main() {
   });
   console.log('✅ Created researcher user:', researcher.email);
 
-  // Create sample journals
   const sampleJournals = [
     {
       filename: 'renewable-energy-2024.pdf',

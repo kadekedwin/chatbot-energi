@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
+<<<<<<< HEAD
 /**
  * Dynamic API URL Detection
  * - Development: http://localhost:5000
@@ -45,18 +46,26 @@ console.log('🌐 EnerNova API Client initialized:', {
   environment: process.env.NODE_ENV,
   isClient: typeof window !== 'undefined'
 });
+=======
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+>>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
 
-// Create axios instance
 export const apiClient = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+<<<<<<< HEAD
   withCredentials: true,
   timeout: 30000, // 30 detik timeout
 });
 
 // Request Interceptor
+=======
+  withCredentials: true, 
+});
+
+>>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
 apiClient.interceptors.request.use(
   (config: any) => {
     const token = localStorage.getItem('token');
@@ -82,7 +91,10 @@ apiClient.interceptors.request.use(
   }
 );
 
+<<<<<<< HEAD
 // Response Interceptor dengan Error Handling yang lebih baik
+=======
+>>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
 apiClient.interceptors.response.use(
   (response: any) => {
     if (process.env.NODE_ENV === 'development') {
@@ -115,7 +127,11 @@ apiClient.interceptors.response.use(
     
     // 401 Unauthorized
     if (error.response?.status === 401) {
+<<<<<<< HEAD
       console.warn('⚠️ Unauthorized - Redirecting to login');
+=======
+      
+>>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       if (typeof window !== 'undefined') {
@@ -137,7 +153,6 @@ apiClient.interceptors.response.use(
   }
 );
 
-// Auth API
 export const authAPI = {
   register: async (name: string, email: string, password: string) => {
     const response = await apiClient.post('/auth/register', { name, email, password });
@@ -146,7 +161,7 @@ export const authAPI = {
 
   login: async (email: string, password: string) => {
     const response = await apiClient.post('/auth/login', { email, password });
-    const { data } = response.data; // Extract nested data
+    const { data } = response.data; 
     if (data && data.token) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -169,7 +184,6 @@ export const authAPI = {
   },
 };
 
-// Journal API
 export const journalAPI = {
   getAll: async (params?: { status?: string; search?: string; page?: number; limit?: number }) => {
     const response = await apiClient.get('/journals', { params });
@@ -213,7 +227,6 @@ export const journalAPI = {
   },
 };
 
-// Chat API
 export const chatAPI = {
   sendMessage: async (message: string, conversationHistory?: any[]) => {
     const response = await apiClient.post('/chat', { 
@@ -224,7 +237,6 @@ export const chatAPI = {
   },
 };
 
-// Upload API
 export const uploadAPI = {
   uploadJournal: async (file: File) => {
     const formData = new FormData();
@@ -239,7 +251,6 @@ export const uploadAPI = {
   },
 };
 
-// Helper function to handle API errors
 export const handleAPIError = (error: any): string => {
   if (axios.isAxiosError(error)) {
     // Network Error (tidak ada response dari server)

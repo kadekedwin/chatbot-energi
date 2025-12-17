@@ -1,7 +1,6 @@
 const prisma = require('../config/database');
 const logger = require('../utils/logger');
 
-// Get all journals (with filters)
 exports.getAllJournals = async (req, res, next) => {
   try {
     const { 
@@ -14,13 +13,12 @@ exports.getAllJournals = async (req, res, next) => {
     } = req.query;
     
     const skip = (parseInt(page) - 1) * parseInt(limit);
-    
-    // Build filter (SQLite compatible - case-insensitive via toLowerCase)
+
     const where = {};
     
     if (status) where.status = status;
     if (author) {
-      // SQLite: use contains with lowercase
+      
       where.detectedAuthor = { contains: author };
     }
     if (year) where.publicationYear = year;
@@ -31,8 +29,7 @@ exports.getAllJournals = async (req, res, next) => {
         { detectedAuthor: { contains: search } }
       ];
     }
-    
-    // Get journals
+
     const [journals, total] = await Promise.all([
       prisma.journal.findMany({
         where,
@@ -70,7 +67,6 @@ exports.getAllJournals = async (req, res, next) => {
   }
 };
 
-// Get single journal
 exports.getJournalById = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -105,7 +101,6 @@ exports.getJournalById = async (req, res, next) => {
   }
 };
 
-// Create journal
 exports.createJournal = async (req, res, next) => {
   try {
     const {
@@ -159,7 +154,6 @@ exports.createJournal = async (req, res, next) => {
   }
 };
 
-// Update journal status
 exports.updateJournalStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -198,7 +192,6 @@ exports.updateJournalStatus = async (req, res, next) => {
   }
 };
 
-// Delete journal
 exports.deleteJournal = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -218,7 +211,6 @@ exports.deleteJournal = async (req, res, next) => {
   }
 };
 
-// Get journal statistics
 exports.getStatistics = async (req, res, next) => {
   try {
     const [

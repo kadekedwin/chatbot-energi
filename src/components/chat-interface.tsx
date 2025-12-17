@@ -10,11 +10,9 @@ import { Send, Leaf, BarChart3, TrendingUp, Users, GraduationCap } from 'lucide-
 import { RobotAvatar, EnerNovaLoading } from './Logo';
 import extractedMetadata from '@/lib/journals_metadata';
 
-// --- IMPORT LIBRARY MARKDOWN (Agar Tabel Rapi) ---
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-// --- IMPORT CHART COMPONENTS ---
 import { 
   RenewableEnergyPotentialChart, 
   NickelProductionChart, 
@@ -47,8 +45,7 @@ export default function ChatInterface() {
   const abortRef = useRef<AbortController | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showAuthors, setShowAuthors] = useState(false);
-  
-  // Extract unique authors (only detected ones)
+
   const uniqueAuthors = Array.from(
     new Set(
       extractedMetadata
@@ -57,7 +54,6 @@ export default function ChatInterface() {
     )
   ).sort();
 
-  // Auto-scroll ke bawah saat ada pesan baru
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -68,7 +64,6 @@ export default function ChatInterface() {
     setInput(e.target.value);
   };
 
-  // Fungsi untuk menghentikan loading jika macet
   const stop = () => {
     if (abortRef.current) {
       abortRef.current.abort();
@@ -80,11 +75,9 @@ export default function ChatInterface() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validasi Input (Agar tidak error undefined)
     const trimmed = (input || '').trim();
     if (!trimmed) return;
 
-    // 1. Masukkan pesan user ke layar
     const userMsg: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
@@ -99,7 +92,7 @@ export default function ChatInterface() {
     abortRef.current = controller;
 
     try {
-      // 2. Kirim ke Backend API (Hybrid RAG Mode)
+      
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/chat`, {
         method: 'POST',
         headers: { 
@@ -124,7 +117,6 @@ export default function ChatInterface() {
       const reply = data?.data?.message ?? 'Maaf, tidak ada respons.';
       const metadata = data?.data?.metadata;
 
-      // Detect if answer mentions energy/nickel data that should show chart
       const lowerContent = reply.toLowerCase();
       let chartType: ChatMessage['showChart'] = undefined;
       
@@ -144,7 +136,6 @@ export default function ChatInterface() {
         chartType = 'energymix';
       }
 
-      // 3. Masukkan balasan AI ke layar
       const aiMsg: ChatMessage = {
         id: Date.now().toString() + '-ai',
         role: 'assistant',
@@ -169,7 +160,7 @@ export default function ChatInterface() {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-      {/* Author Sidebar */}
+      {}
       {showAuthors && (
         <div className="w-80 bg-white border-r-2 border-emerald-200 shadow-lg flex flex-col">
           <div className="p-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
@@ -224,7 +215,7 @@ export default function ChatInterface() {
         </div>
       )}
       
-      {/* Main Chat Card */}
+      {}
     <Card className="flex-1 flex flex-col shadow-2xl border-2 border-emerald-500/20 bg-white">`
       
       {/* --- HEADER dengan tema Emerald-Teal --- */}
@@ -260,7 +251,7 @@ export default function ChatInterface() {
         </CardTitle>
       </CardHeader>`
 
-      {/* --- AREA CHAT --- */}
+      {}
       <CardContent className="flex-1 p-0 overflow-hidden bg-gradient-to-br from-slate-50 to-emerald-50/30">
         <ScrollArea className="h-full p-6">
           <div className="flex flex-col gap-6">
@@ -271,7 +262,7 @@ export default function ChatInterface() {
                   m.role === 'user' ? 'flex-row-reverse' : 'flex-row'
                 }`}
               >
-                {/* Avatar */}
+                {}
                 {m.role === 'user' ? (
                   <Avatar className="h-10 w-10 mt-1 shadow-md">
                     <AvatarFallback className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white font-semibold">
@@ -284,7 +275,7 @@ export default function ChatInterface() {
                   </div>
                 )}
 
-                {/* Bubble Chat */}
+                {}
                 <div
                   className={`rounded-2xl p-5 max-w-[75%] shadow-lg ${
                     m.role === 'user'
@@ -293,15 +284,15 @@ export default function ChatInterface() {
                   }`}
                 >
                   {m.role === 'user' ? (
-                    // User: Teks biasa
+                    
                     <p className="whitespace-pre-wrap text-base leading-relaxed">{m.content}</p>
                   ) : (
-                    // AI: Render Markdown (Tabel, Bold, List)
+                    
                     <div className="prose prose-sm max-w-none prose-headings:text-emerald-700 prose-a:text-teal-600 prose-strong:text-emerald-800 prose-code:bg-emerald-100 prose-code:text-emerald-700 prose-pre:bg-slate-800">
                       <ReactMarkdown 
                         remarkPlugins={[remarkGfm]}
                         components={{
-                          // Styling khusus untuk tabel agar ada garisnya
+                          
                           table: ({node, ...props}) => (
                             <div className="overflow-x-auto my-3 border-2 border-emerald-200 rounded-lg">
                               <table className="w-full text-left text-sm border-collapse" {...props} />
@@ -327,7 +318,7 @@ export default function ChatInterface() {
                     </div>
                   )}
                   
-                  {/* Show chart if applicable */}
+                  {}
                   {m.showChart && m.role === 'assistant' && (
                     <div className="mt-4 border-t-2 border-teal-200 pt-4">
                       <div className="flex items-center gap-2 mb-3 text-teal-700">
@@ -342,7 +333,7 @@ export default function ChatInterface() {
                     </div>
                   )}
                   
-                  {/* Show metadata badge */}
+                  {}
                   {m.metadata?.mode && m.role === 'assistant' && (
                     <div className="mt-3 pt-3 border-t border-teal-100">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 text-teal-700 text-xs font-medium rounded-full border border-teal-200">
@@ -355,7 +346,7 @@ export default function ChatInterface() {
               </div>
             ))}
 
-            {/* Indikator Loading */}
+            {}
             {isLoading && (
               <div className="flex gap-3">
                  <div className="h-12 w-12 mt-1 flex items-center justify-center rounded-full bg-gradient-to-br from-gray-800 to-gray-900 border-2 border-emerald-500 shadow-xl animate-pulse">
@@ -375,7 +366,7 @@ export default function ChatInterface() {
         </ScrollArea>
       </CardContent>
 
-      {/* --- FOOTER INPUT --- */}
+      {}
       <CardFooter className="p-5 border-t bg-white shadow-inner">
         <form onSubmit={handleSubmit} className="flex w-full gap-3">
           <Input

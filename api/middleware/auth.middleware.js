@@ -3,7 +3,7 @@ const logger = require('../utils/logger');
 
 const authenticate = (req, res, next) => {
   try {
-    // Get token from cookies or Authorization header
+    
     const token = req.cookies.token || 
                   req.headers.authorization?.split(' ')[1];
     
@@ -13,11 +13,9 @@ const authenticate = (req, res, next) => {
         message: 'Authentication required. Please login.'
       });
     }
-    
-    // Verify token
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Attach user to request
+
     req.user = decoded;
     
     logger.info(`User authenticated: ${decoded.email} (${decoded.role})`);
@@ -37,7 +35,6 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// Optional authentication - doesn't block if no token
 const optionalAuth = (req, res, next) => {
   try {
     const token = req.cookies.token || 
@@ -54,7 +51,7 @@ const optionalAuth = (req, res, next) => {
     
     next();
   } catch (error) {
-    // Token invalid but allow request to continue
+    
     req.user = null;
     next();
   }

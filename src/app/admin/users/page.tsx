@@ -61,7 +61,7 @@ export default function UsersPage() {
           </Button>
         </div>
 
-        {/* Stats */}
+        {}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="border-t-4 border-t-emerald-600">
             <CardHeader className="pb-2">
@@ -104,7 +104,7 @@ export default function UsersPage() {
           </Card>
         </div>
 
-        {/* Users List */}
+        {}
         <Card className="shadow-xl border-2 border-emerald-100">
           <CardHeader className="bg-gradient-to-r from-emerald-50 to-teal-50">
             <CardTitle className="flex items-center gap-2 text-emerald-700">

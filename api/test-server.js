@@ -1,7 +1,4 @@
-/**
- * 🧪 TEST SERVER - NO DATABASE REQUIRED
- * Untuk testing API endpoint tanpa PostgreSQL
- */
+
 
 require('dotenv').config();
 const express = require('express');
@@ -12,16 +9,13 @@ const compression = require('compression');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(compression());
 app.use(cors({ origin: '*', credentials: true }));
 app.use(express.json());
 
-// Mock data untuk testing
 const mockJournals = require('../journals_metadata.json').slice(0, 10);
 
-// Health check
 app.get('/', (req, res) => {
   res.json({
     status: 'success',
@@ -47,7 +41,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Mock journals endpoint
 app.get('/api/journals', (req, res) => {
   res.json({
     status: 'success',
@@ -63,7 +56,6 @@ app.get('/api/journals', (req, res) => {
   });
 });
 
-// Mock single journal
 app.get('/api/journals/:id', (req, res) => {
   const journal = mockJournals.find(j => j.id === req.params.id);
   
@@ -80,7 +72,6 @@ app.get('/api/journals/:id', (req, res) => {
   });
 });
 
-// Mock statistics
 app.get('/api/journals/statistics', (req, res) => {
   const uniqueAuthors = new Set(
     mockJournals
@@ -102,7 +93,6 @@ app.get('/api/journals/statistics', (req, res) => {
   });
 });
 
-// 404 handler
 app.use((req, res) => {
   res.status(404).json({
     status: 'error',
@@ -112,7 +102,6 @@ app.use((req, res) => {
   });
 });
 
-// Error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
@@ -121,7 +110,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
 app.listen(PORT, () => {
   console.log('\n' + '='.repeat(60));
   console.log('🧪 TEST SERVER STARTED (No Database Required)');

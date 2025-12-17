@@ -14,7 +14,7 @@ export default function HomePage() {
   const [currentTime, setCurrentTime] = useState('');
 
   useEffect(() => {
-    // Real-time clock - updates every second
+    
     const updateTime = () => {
       const now = new Date();
       const timeString = now.toLocaleTimeString('id-ID', { 
@@ -31,16 +31,16 @@ export default function HomePage() {
       setCurrentTime(`${timeString} - ${dateString}`);
     };
     
-    updateTime(); // Initial call
-    const interval = setInterval(updateTime, 1000); // Update every second
+    updateTime(); 
+    const interval = setInterval(updateTime, 1000); 
     
-    return () => clearInterval(interval); // Cleanup
+    return () => clearInterval(interval); 
   }, []);
 
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-        {/* Header */}
+        {}
         <header className="bg-white border-b border-emerald-100 shadow-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div className="flex justify-between items-center">
@@ -56,7 +56,7 @@ export default function HomePage() {
                 </div>
               </div>
               
-              {/* Clock Display */}
+              {}
               <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg border border-emerald-200">
                 <Clock className="w-4 h-4 text-emerald-600" />
                 <span className="text-sm font-medium text-slate-700">{currentTime}</span>
@@ -110,7 +110,7 @@ export default function HomePage() {
           </div>
         </header>
 
-        {/* Main Content */}
+        {}
         <main className="flex-1">
           <ChatInterface />
         </main>

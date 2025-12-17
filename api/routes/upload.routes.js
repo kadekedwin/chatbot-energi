@@ -5,7 +5,6 @@ const path = require('path');
 const { authenticate } = require('../middleware/auth.middleware');
 const logger = require('../utils/logger');
 
-// Configure multer for file upload
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, '../../data_jurnal'));
@@ -19,7 +18,7 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024 // 10MB
+    fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024 
   },
   fileFilter: (req, file, cb) => {
     if (file.mimetype === 'application/pdf') {
@@ -30,7 +29,6 @@ const upload = multer({
   }
 });
 
-// Upload single PDF
 router.post('/pdf', authenticate, upload.single('file'), async (req, res, next) => {
   try {
     if (!req.file) {
@@ -58,7 +56,6 @@ router.post('/pdf', authenticate, upload.single('file'), async (req, res, next) 
   }
 });
 
-// Upload multiple PDFs
 router.post('/pdf/bulk', authenticate, upload.array('files', 10), async (req, res, next) => {
   try {
     if (!req.files || req.files.length === 0) {
@@ -87,7 +84,6 @@ router.post('/pdf/bulk', authenticate, upload.array('files', 10), async (req, re
   }
 });
 
-// Error handler for multer
 router.use((error, req, res, next) => {
   if (error instanceof multer.MulterError) {
     if (error.code === 'LIMIT_FILE_SIZE') {
