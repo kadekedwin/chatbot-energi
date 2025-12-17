@@ -45,30 +45,20 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-
+    // Allow requests with no origin (mobile apps, curl, etc)
     if (!origin) return callback(null, true);
 
-<<<<<<< HEAD
     // In development, allow all origins
-=======
->>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
     if (process.env.NODE_ENV !== 'production') {
       return callback(null, true);
     }
 
-<<<<<<< HEAD
     // In production, check whitelist
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       console.warn('⚠️ CORS blocked origin:', origin);
-      callback(null, true); // Allow for now, bisa diubah ke false jika ingin strict
-=======
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(null, true);
->>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
+      callback(null, true); // Allow for now, change to false for strict mode
     }
   },
   credentials: true,

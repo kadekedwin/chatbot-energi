@@ -1,53 +1,15 @@
 import axios, { AxiosError } from 'axios';
 
-<<<<<<< HEAD
 /**
- * Dynamic API URL Detection
- * - Development: http://localhost:5000
- * - Production: https://enernova.undiksha.cloud/api
- * - Staging: bisa ditambahkan jika ada
+ * API URL Configuration
+ * Priority: NEXT_PUBLIC_API_URL env var > fallback to localhost
  */
-function getAPIBaseURL(): string {
-  // 1. Cek environment variable dari Next.js
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL;
-  }
-
-  // 2. Deteksi otomatis berdasarkan window.location (client-side)
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    
-    // Production domain
-    if (hostname === 'enernova.undiksha.cloud' || hostname === 'www.enernova.undiksha.cloud') {
-      return 'https://enernova.undiksha.cloud/api';
-    }
-    
-    // Development lokal
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return 'http://localhost:5000/api';
-    }
-    
-    // Network access (misal dari HP ke PC yang running di 192.168.x.x)
-    if (hostname.startsWith('192.168.') || hostname.startsWith('10.')) {
-      return `http://${hostname}:5000/api`;
-    }
-  }
-
-  // 3. Fallback untuk server-side rendering (SSR)
-  return process.env.NODE_ENV === 'production' 
-    ? 'https://enernova.undiksha.cloud/api'
-    : 'http://localhost:5000/api';
-}
-
-export const API_URL = getAPIBaseURL();
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
 console.log('🌐 EnerNova API Client initialized:', {
   baseURL: API_URL,
   environment: process.env.NODE_ENV,
-  isClient: typeof window !== 'undefined'
 });
-=======
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 >>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
 
 export const apiClient = axios.create({
@@ -91,67 +53,53 @@ apiClient.interceptors.request.use(
   }
 );
 
-<<<<<<< HEAD
-// Response Interceptor dengan Error Handling yang lebih baik
-=======
->>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
+// Response Interceptor
 apiClient.interceptors.response.use(
   (response: any) => {
     if (process.env.NODE_ENV === 'development') {
       console.log('✅ API Response:', {
         status: response.status,
-        url: response.config.url
+        url: response.config.url,
       });
     }
     return response;
   },
   (error: AxiosError) => {
-    // Network Error (tidak ada koneksi ke server)
+    // Network Error
     if (!error.response) {
       console.error('🔴 Network Error:', {
         message: error.message,
         baseURL: API_URL,
-        suggestion: 'Cek apakah backend API berjalan dan CORS dikonfigurasi dengan benar'
       });
-      
-      // Tampilkan error yang user-friendly
-      if (typeof window !== 'undefined') {
-        const errorMsg = process.env.NODE_ENV === 'production'
-          ? 'Tidak dapat terhubung ke server. Silakan coba lagi.'
-          : `Network Error: Backend tidak dapat dijangkau di ${API_URL}`;
-        
-        // Bisa di-uncomment jika ingin tampilkan alert
-        // alert(errorMsg);
+    }
+
+    // HTTP Error Responses
+    if (error.response) {
+      const status = error.response.status;
+
+      if (status === 401) {
+        console.warn('⚠️ Unauthorized - Redirecting to login');
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+        }
+      }
+
+      if (status === 403) {
+        console.warn('⚠️ Forbidden - Access denied');
+      }
+
+      if (status >= 500) {
+        console.error('🔴 Server Error:', error.response.data);
       }
     }
-    
-    // 401 Unauthorized
-    if (error.response?.status === 401) {
-<<<<<<< HEAD
-      console.warn('⚠️ Unauthorized - Redirecting to login');
-=======
-      
->>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
-      }
-    }
-    
-    // 403 Forbidden
-    if (error.response?.status === 403) {
-      console.warn('⚠️ Forbidden - Access denied');
-    }
-    
-    // 500 Internal Server Error
-    if (error.response?.status === 500) {
-      console.error('🔴 Server Error:', error.response.data);
-    }
-    
+
     return Promise.reject(error);
   }
 );
+
+export default apiClient;
 
 export const authAPI = {
   register: async (name: string, email: string, password: string) => {
