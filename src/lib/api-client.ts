@@ -1,43 +1,138 @@
 import axios, { AxiosError } from 'axios';
 
-// API Configuration
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+/**
+ * Dynamic API URL Detection
+ * - Development: http://localhost:5000
+ * - Production: https://enernova.undiksha.cloud/api
+ * - Staging: bisa ditambahkan jika ada
+ */
+function getAPIBaseURL(): string {
+  // 1. Cek environment variable dari Next.js
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+
+  // 2. Deteksi otomatis berdasarkan window.location (client-side)
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    
+    // Production domain
+    if (hostname === 'enernova.undiksha.cloud' || hostname === 'www.enernova.undiksha.cloud') {
+      return 'https://enernova.undiksha.cloud/api';
+    }
+    
+    // Development lokal
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'http://localhost:5000/api';
+    }
+    
+    // Network access (misal dari HP ke PC yang running di 192.168.x.x)
+    if (hostname.startsWith('192.168.') || hostname.startsWith('10.')) {
+      return `http://${hostname}:5000/api`;
+    }
+  }
+
+  // 3. Fallback untuk server-side rendering (SSR)
+  return process.env.NODE_ENV === 'production' 
+    ? 'https://enernova.undiksha.cloud/api'
+    : 'http://localhost:5000/api';
+}
+
+export const API_URL = getAPIBaseURL();
+
+console.log('🌐 EnerNova API Client initialized:', {
+  baseURL: API_URL,
+  environment: process.env.NODE_ENV,
+  isClient: typeof window !== 'undefined'
+});
 
 // Create axios instance
 export const apiClient = axios.create({
-  baseURL: `${API_URL}/api`,
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Enable cookies for JWT
+  withCredentials: true,
+  timeout: 30000, // 30 detik timeout
 });
 
-// Request interceptor - Add token to headers
+// Request Interceptor
 apiClient.interceptors.request.use(
   (config: any) => {
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Debug log untuk development
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📤 API Request:', {
+        method: config.method?.toUpperCase(),
+        url: config.url,
+        baseURL: config.baseURL,
+        fullURL: `${config.baseURL}${config.url}`
+      });
+    }
+    
     return config;
   },
   (error: any) => {
+    console.error('❌ Request Error:', error);
     return Promise.reject(error);
   }
 );
 
-// Response interceptor - Handle errors
+// Response Interceptor dengan Error Handling yang lebih baik
 apiClient.interceptors.response.use(
-  (response: any) => response,
+  (response: any) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ API Response:', {
+        status: response.status,
+        url: response.config.url
+      });
+    }
+    return response;
+  },
   (error: AxiosError) => {
+    // Network Error (tidak ada koneksi ke server)
+    if (!error.response) {
+      console.error('🔴 Network Error:', {
+        message: error.message,
+        baseURL: API_URL,
+        suggestion: 'Cek apakah backend API berjalan dan CORS dikonfigurasi dengan benar'
+      });
+      
+      // Tampilkan error yang user-friendly
+      if (typeof window !== 'undefined') {
+        const errorMsg = process.env.NODE_ENV === 'production'
+          ? 'Tidak dapat terhubung ke server. Silakan coba lagi.'
+          : `Network Error: Backend tidak dapat dijangkau di ${API_URL}`;
+        
+        // Bisa di-uncomment jika ingin tampilkan alert
+        // alert(errorMsg);
+      }
+    }
+    
+    // 401 Unauthorized
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
+      console.warn('⚠️ Unauthorized - Redirecting to login');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       if (typeof window !== 'undefined') {
         window.location.href = '/login';
       }
     }
+    
+    // 403 Forbidden
+    if (error.response?.status === 403) {
+      console.warn('⚠️ Forbidden - Access denied');
+    }
+    
+    // 500 Internal Server Error
+    if (error.response?.status === 500) {
+      console.error('🔴 Server Error:', error.response.data);
+    }
+    
     return Promise.reject(error);
   }
 );
@@ -147,7 +242,32 @@ export const uploadAPI = {
 // Helper function to handle API errors
 export const handleAPIError = (error: any): string => {
   if (axios.isAxiosError(error)) {
-    return error.response?.data?.error || error.message || 'An error occurred';
+    // Network Error (tidak ada response dari server)
+    if (!error.response) {
+      return 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
+    }
+    
+    // Error dari server
+    const message = error.response?.data?.error || 
+                   error.response?.data?.message || 
+                   error.message;
+    
+    // Custom error messages
+    switch (error.response?.status) {
+      case 400:
+        return `Data tidak valid: ${message}`;
+      case 401:
+        return 'Sesi Anda telah berakhir. Silakan login kembali.';
+      case 403:
+        return 'Anda tidak memiliki akses ke resource ini.';
+      case 404:
+        return 'Data tidak ditemukan.';
+      case 500:
+        return 'Terjadi kesalahan pada server. Silakan coba lagi.';
+      default:
+        return message || 'Terjadi kesalahan tidak terduga.';
+    }
   }
-  return 'An unexpected error occurred';
+  
+  return 'Terjadi kesalahan tidak terduga.';
 };

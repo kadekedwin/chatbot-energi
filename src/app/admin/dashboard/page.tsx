@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { FileText, CheckCircle, XCircle, Clock, TrendingUp, Users, Database, Leaf, AlertTriangle } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useAuth } from '@/contexts/AuthContext';
+import { DebugAPIInfo } from '@/components/debug-api-info';
 
 interface Journal {
   id: string;
@@ -359,6 +360,9 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-8">
       <div className="max-w-7xl mx-auto space-y-6">
+        
+        {/* Debug Info - only in development */}
+        <DebugAPIInfo />
         
         <div className="flex justify-between items-center">
           <div>

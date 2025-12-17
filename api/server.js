@@ -43,31 +43,32 @@ app.use('/api/', limiter);
 // Allow multiple origins including production domain
 const allowedOrigins = [
   'http://localhost:3000',
-  'http://localhost:5000', 
+  'http://localhost:5000',
   'http://127.0.0.1:3000',
   'http://127.0.0.1:5000',
   'http://10.21.0.55:3000',
   'http://20.2.81.1:3000',
   'http://192.168.56.1:3000',
-  'https://enernova.undiksha.cloud',
-  'https://www.enernova.undiksha.cloud'
+  'https://enernova.undiksha.cloud',           // ✅ Production frontend
+  'https://www.enernova.undiksha.cloud',       // ✅ Production frontend (www)
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
-    
-    // Allow all origins in development
+
+    // In development, allow all origins
     if (process.env.NODE_ENV !== 'production') {
       return callback(null, true);
     }
-    
-    // Check if origin is in allowed list
+
+    // In production, check whitelist
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(null, true); // Allow all for now, can be restricted later
+      console.warn('⚠️ CORS blocked origin:', origin);
+      callback(null, true); // Allow for now, bisa diubah ke false jika ingin strict
     }
   },
   credentials: true,

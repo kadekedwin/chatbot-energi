@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -54,16 +55,14 @@ export default function LoginPage() {
       
       if (result.success) {
         console.log('✅ Login successful! Getting user data from localStorage...');
-        
-        // Get user from localStorage to determine role
+
         const userStr = localStorage.getItem('user');
         if (userStr) {
           const user = JSON.parse(userStr);
           const role = user.role.toUpperCase();
           
           console.log('🔄 Redirecting based on role:', role);
-          
-          // Redirect berdasarkan role
+
           if (role === 'ADMIN') {
             console.log('→ Redirecting to /admin/dashboard');
             router.push('/admin/dashboard');
@@ -89,25 +88,6 @@ export default function LoginPage() {
       console.error('❌ Login error:', error);
       setError(error.message || 'Terjadi kesalahan saat login');
       setIsLoading(false);
-    }
-  };
-
-  const handleDemoLogin = (userType: 'admin' | 'contributor' | 'user') => {
-    if (userType === 'admin') {
-      setCredentials({
-        email: 'admin@enernova.id',
-        password: 'admin123'
-      });
-    } else if (userType === 'contributor') {
-      setCredentials({
-        email: 'kontributor@enernova.id',
-        password: 'kontributor123'
-      });
-    } else {
-      setCredentials({
-        email: 'peneliti@enernova.id',
-        password: 'peneliti123'
-      });
     }
   };
 
@@ -262,84 +242,6 @@ export default function LoginPage() {
                 </div>
               )}
 
-              {/* Demo Credentials Info */}
-              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl p-4 space-y-3">
-                <p className="text-xs font-bold text-emerald-800 mb-2 flex items-center gap-2">
-                  <Zap className="w-4 h-4" />
-                  🚀 Demo Access - 3 Role Tersedia:
-                </p>
-                <div className="space-y-2">
-                  {/* Admin */}
-                  <div className="bg-white rounded-lg p-3 border border-purple-200">
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-purple-600" />
-                        <span className="font-mono text-xs font-semibold text-purple-700">👑 ADMIN</span>
-                      </div>
-                      <Button 
-                        type="button"
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleDemoLogin('admin')}
-                        className="h-7 px-3 text-xs bg-purple-600 text-white border-purple-600 hover:bg-purple-700"
-                        disabled={isLoading}
-                      >
-                        Login
-                      </Button>
-                    </div>
-                    <p className="text-[10px] text-slate-600 font-mono pl-6">admin@enernova.id</p>
-                    <p className="text-[9px] text-slate-500 pl-6 mt-1">Full access: Dashboard, Approve/Reject, Manage Users</p>
-                  </div>
-                  
-                  {/* Kontributor */}
-                  <div className="bg-white rounded-lg p-3 border border-amber-200">
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-amber-600" />
-                        <span className="font-mono text-xs font-semibold text-amber-700">📤 KONTRIBUTOR</span>
-                      </div>
-                      <Button 
-                        type="button"
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleDemoLogin('contributor')}
-                        className="h-7 px-3 text-xs bg-amber-500 text-white border-amber-500 hover:bg-amber-600"
-                        disabled={isLoading}
-                      >
-                        Login
-                      </Button>
-                    </div>
-                    <p className="text-[10px] text-slate-600 font-mono pl-6">kontributor@enernova.id</p>
-                    <p className="text-[9px] text-slate-500 pl-6 mt-1">Upload jurnal (multiple), Track status approval</p>
-                  </div>
-                  
-                  {/* User */}
-                  <div className="bg-white rounded-lg p-3 border border-emerald-200">
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex items-center gap-2">
-                        <Leaf className="w-4 h-4 text-emerald-600" />
-                        <span className="font-mono text-xs font-semibold text-emerald-700">👤 USER</span>
-                      </div>
-                      <Button 
-                        type="button"
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleDemoLogin('user')}
-                        className="h-7 px-3 text-xs bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700"
-                        disabled={isLoading}
-                      >
-                        Login
-                      </Button>
-                    </div>
-                    <p className="text-[10px] text-slate-600 font-mono pl-6">peneliti@enernova.id</p>
-                    <p className="text-[9px] text-slate-500 pl-6 mt-1">Chat AI, View charts, Access research database</p>
-                  </div>
-                </div>
-                <p className="text-[10px] text-slate-500 text-center mt-2 pt-2 border-t">
-                  🔑 Password semua role: <span className="font-mono font-bold">admin123, kontributor123, peneliti123</span>
-                </p>
-              </div>
-
               {/* Submit Button */}
               <Button 
                 type="submit" 
@@ -359,6 +261,19 @@ export default function LoginPage() {
                 )}
               </Button>
 
+              {/* Register Link */}
+              <div className="pt-2 text-center border-t border-slate-200">
+                <p className="text-sm text-slate-600">
+                  Belum punya akun?{' '}
+                  <Link 
+                    href="/register"
+                    className="font-semibold text-emerald-600 hover:text-emerald-700 hover:underline transition-colors"
+                  >
+                    Daftar Sekarang
+                  </Link>
+                </p>
+              </div>
+
             </CardContent>
           </form>
 
@@ -369,14 +284,12 @@ export default function LoginPage() {
             >
               Lupa password?
             </button>
-            <div className="text-xs text-slate-500 text-center">
-              Belum punya akun?{' '}
-              <button 
-                type="button"
-                className="text-emerald-600 hover:text-emerald-700 font-semibold hover:underline transition-colors"
-              >
-                Request Demo Access
-              </button>
+            
+            <div className="text-xs text-slate-500 text-center pt-2">
+              <p className="flex items-center justify-center gap-1">
+                <Shield className="w-3 h-3 text-emerald-600" />
+                Keamanan data Anda terjamin dengan enkripsi end-to-end
+              </p>
             </div>
           </CardFooter>
         </Card>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FileText, LogOut, Leaf, ChevronLeft, Award, TrendingUp } from 'lucide-react';
@@ -7,10 +8,13 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { EnerNovaLogo } from '@/components/Logo';
+import { Sidebar } from '@/components/sidebar';
+import { MobileHeader } from '@/components/mobile-header';
 
 export default function ContributorLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const menuItems = [
     { href: '/contributor', icon: TrendingUp, label: 'Dashboard' },
@@ -19,9 +23,10 @@ export default function ContributorLayout({ children }: { children: React.ReactN
   return (
     <ProtectedRoute>
       <div className="flex h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white border-r border-emerald-100 shadow-lg flex flex-col">
-          <div className="p-6 border-b border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50">
+        {/* Sidebar dengan state isOpen */}
+        <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
+          {/* Header Sidebar - Hidden di mobile karena ada MobileHeader */}
+          <div className="hidden lg:block p-6 border-b border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50">
             <div className="flex items-center gap-3">
               <div className="shadow-lg rounded-xl">
                 <EnerNovaLogo size={40} />
@@ -48,7 +53,7 @@ export default function ContributorLayout({ children }: { children: React.ReactN
           
           {/* Navigation Menu */}
           <nav className="flex-1 p-4 space-y-2">
-            <Link href="/">
+            <Link href="/" onClick={() => setIsSidebarOpen(false)}>
               <Button
                 variant="ghost"
                 className="w-full justify-start gap-3 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700"
@@ -62,7 +67,7 @@ export default function ContributorLayout({ children }: { children: React.ReactN
               {menuItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
-                  <Link key={item.href} href={item.href}>
+                  <Link key={item.href} href={item.href} onClick={() => setIsSidebarOpen(false)}>
                     <Button
                       variant={isActive ? 'default' : 'ghost'}
                       className={`w-full justify-start gap-3 ${
@@ -83,7 +88,10 @@ export default function ContributorLayout({ children }: { children: React.ReactN
           {/* Logout Button */}
           <div className="p-4 border-t border-emerald-100">
             <Button
-              onClick={logout}
+              onClick={() => {
+                setIsSidebarOpen(false);
+                logout();
+              }}
               variant="ghost"
               className="w-full justify-start gap-3 text-red-600 hover:bg-red-50 hover:text-red-700"
             >
@@ -91,12 +99,22 @@ export default function ContributorLayout({ children }: { children: React.ReactN
               Keluar
             </Button>
           </div>
-        </aside>
+        </Sidebar>
 
-        {/* Main Content */}
-        <main className="flex-1 overflow-y-auto">
-          {children}
-        </main>
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Mobile Header dengan Hamburger */}
+          <MobileHeader 
+            onMenuClick={() => setIsSidebarOpen(true)}
+            title="EnerNova"
+            subtitle="Contributor Portal"
+          />
+
+          {/* Content dengan padding yang pas */}
+          <main className="flex-1 overflow-y-auto">
+            {children}
+          </main>
+        </div>
       </div>
     </ProtectedRoute>
   );

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, FileText, Users, Settings, LogOut, Leaf, ChevronLeft } from 'lucide-react';
@@ -7,10 +8,13 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { EnerNovaLogo } from '@/components/Logo';
+import { Sidebar } from '@/components/sidebar';
+import { MobileHeader } from '@/components/mobile-header';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const menuItems = [
     { href: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -22,9 +26,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <ProtectedRoute requireAdmin={true}>
       <div className="flex h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white border-r border-emerald-100 shadow-lg flex flex-col">
-          <div className="p-6 border-b border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50">
+        {/* Sidebar dengan state isOpen */}
+        <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}>
+          {/* Header Sidebar - Hidden di mobile karena ada MobileHeader */}
+          <div className="hidden lg:block p-6 border-b border-emerald-100 bg-gradient-to-r from-emerald-50 to-teal-50">
             <div className="flex items-center gap-3">
               <div className="bg-gradient-to-br from-emerald-600 to-teal-500 p-3 rounded-xl shadow-lg">
                 <Leaf className="w-7 h-7 text-white" />
@@ -49,6 +54,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
           </div>
           
+          {/* Navigation Menu */}
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
             {menuItems.map((item) => {
               const Icon = item.icon;
@@ -57,7 +63,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               return (
                 <Link 
                   key={item.href}
-                  href={item.href} 
+                  href={item.href}
+                  onClick={() => setIsSidebarOpen(false)} // Tutup sidebar saat link diklik (mobile)
                   className={`
                     flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium
                     ${isActive 
@@ -73,16 +80,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             })}
           </nav>
 
+          {/* Bottom Actions */}
           <div className="p-4 border-t border-emerald-100 space-y-2">
             <Link 
               href="/"
+              onClick={() => setIsSidebarOpen(false)}
               className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition-colors font-medium"
             >
               <ChevronLeft className="w-5 h-5" />
               Ke Chat
             </Link>
             <Button
-              onClick={logout}
+              onClick={() => {
+                setIsSidebarOpen(false);
+                logout();
+              }}
               variant="ghost"
               className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium"
             >
@@ -90,12 +102,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               Logout
             </Button>
           </div>
-        </aside>
+        </Sidebar>
 
-        {/* Main Content */}
-        <main className="flex-1 overflow-y-auto">
-          {children}
-        </main>
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Mobile Header dengan Hamburger */}
+          <MobileHeader 
+            onMenuClick={() => setIsSidebarOpen(true)}
+            title="EnerNova Admin"
+            subtitle="Admin Panel"
+          />
+
+          {/* Content dengan padding yang pas */}
+          <main className="flex-1 overflow-y-auto p-4 lg:p-8">
+            {children}
+          </main>
+        </div>
       </div>
     </ProtectedRoute>
   );
