@@ -56,7 +56,7 @@ export function RenewableEnergyPotentialChart() {
             <XAxis dataKey="name" />
             <YAxis label={{ value: 'Gigawatt (GW)', angle: -90, position: 'insideLeft' }} />
             <Tooltip 
-              formatter={(value: number) => [`${value} GW`, 'Potensi']}
+              formatter={(value: number | undefined) => [`${value ?? 0} GW`, 'Potensi']}
               contentStyle={{ borderRadius: '8px', border: '1px solid #10b981' }}
             />
             <Legend />

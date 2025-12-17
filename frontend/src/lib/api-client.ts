@@ -10,29 +10,25 @@ console.log('🌐 EnerNova API Client initialized:', {
   baseURL: API_URL,
   environment: process.env.NODE_ENV,
 });
->>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
 
 export const apiClient = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-<<<<<<< HEAD
   withCredentials: true,
-  timeout: 30000, // 30 detik timeout
+
+  timeout: 30000,
 });
 
 // Request Interceptor
-=======
-  withCredentials: true, 
-});
-
->>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
 apiClient.interceptors.request.use(
-  (config: any) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     
     // Debug log untuk development
@@ -47,7 +43,7 @@ apiClient.interceptors.request.use(
     
     return config;
   },
-  (error: any) => {
+  (error) => {
     console.error('❌ Request Error:', error);
     return Promise.reject(error);
   }
@@ -64,35 +60,32 @@ apiClient.interceptors.response.use(
     }
     return response;
   },
-  (error: AxiosError) => {
-    // Network Error
+  (error: AxiosError<any>) => {
     if (!error.response) {
       console.error('🔴 Network Error:', {
         message: error.message,
         baseURL: API_URL,
       });
+      return Promise.reject(error);
     }
 
-    // HTTP Error Responses
-    if (error.response) {
-      const status = error.response.status;
+    const status = error.response.status;
 
-      if (status === 401) {
-        console.warn('⚠️ Unauthorized - Redirecting to login');
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          window.location.href = '/login';
-        }
+    if (status === 401) {
+      console.warn('⚠️ Unauthorized - Redirecting to login');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
       }
+    }
 
-      if (status === 403) {
-        console.warn('⚠️ Forbidden - Access denied');
-      }
+    if (status === 403) {
+      console.warn('⚠️ Forbidden - Access denied');
+    }
 
-      if (status >= 500) {
-        console.error('🔴 Server Error:', error.response.data);
-      }
+    if (status >= 500) {
+      console.error('🔴 Server Error:', error.response.data);
     }
 
     return Promise.reject(error);
@@ -109,8 +102,8 @@ export const authAPI = {
 
   login: async (email: string, password: string) => {
     const response = await apiClient.post('/auth/login', { email, password });
-    const { data } = response.data; 
-    if (data && data.token) {
+    const { data } = response.data;
+    if (typeof window !== 'undefined' && data && data.token) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
     }
@@ -121,9 +114,15 @@ export const authAPI = {
     try {
       await apiClient.post('/auth/logout');
     } finally {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
     }
+  },
+  checkAuth: async () => {
+    const response = await apiClient.get('/auth/check');
+    return response.data;
   },
 
   getProfile: async () => {
@@ -201,17 +200,14 @@ export const uploadAPI = {
 
 export const handleAPIError = (error: any): string => {
   if (axios.isAxiosError(error)) {
-    // Network Error (tidak ada response dari server)
     if (!error.response) {
       return 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
     }
     
-    // Error dari server
     const message = error.response?.data?.error || 
                    error.response?.data?.message || 
                    error.message;
     
-    // Custom error messages
     switch (error.response?.status) {
       case 400:
         return `Data tidak valid: ${message}`;
