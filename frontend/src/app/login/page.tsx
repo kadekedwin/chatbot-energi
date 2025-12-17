@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Leaf, Lock, Mail, Eye, EyeOff, Zap, Shield, Sparkles, TrendingUp } from 'lucide-react';
-import { EnerNovaLogo } from '@/components/Logo';
 
 interface LoginCredentials {
   email: string;
@@ -18,10 +17,12 @@ interface LoginCredentials {
 export default function LoginPage() {
   const router = useRouter();
   const { login: authLogin } = useAuth();
+  
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: '',
     password: ''
   });
+  
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -92,14 +93,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 flex items-center justify-center p-4 relative overflow-hidden">
       
-      {}
+      {/* Background Ornaments */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.08),transparent_60%)]"></div>
       <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-200/30 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-200/30 rounded-full blur-3xl"></div>
       
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center relative z-10">
         
-        {}
+        {/* Left Side - Marketing Content (Hidden on Mobile) */}
         <div className="hidden lg:block space-y-8 p-8">
           <div className="flex items-center gap-4">
             <div className="bg-gradient-to-br from-emerald-600 to-teal-600 p-4 rounded-2xl shadow-2xl shadow-emerald-600/40">
@@ -164,7 +165,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {}
+        {/* Right Side - Login Card */}
         <Card className="shadow-2xl border-2 border-emerald-100 overflow-hidden bg-white">
           <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-600"></div>
           
@@ -185,7 +186,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-5">
               
-              {}
+              {/* Email Input */}
               <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-slate-700 flex items-center gap-2">
                   <Mail className="w-4 h-4 text-emerald-600" />
@@ -204,7 +205,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              {}
+              {/* Password Input */}
               <div className="space-y-2">
                 <label htmlFor="password" className="text-sm font-medium text-slate-700 flex items-center gap-2">
                   <Lock className="w-4 h-4 text-emerald-600" />
@@ -232,100 +233,18 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {}
+              {/* Error Message */}
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2">
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-center gap-2 animate-pulse">
                   <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
                   {error}
                 </div>
               )}
 
-<<<<<<< HEAD
               {/* Submit Button */}
-=======
-              {}
-              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl p-4 space-y-3">
-                <p className="text-xs font-bold text-emerald-800 mb-2 flex items-center gap-2">
-                  <Zap className="w-4 h-4" />
-                  🚀 Demo Access - 3 Role Tersedia:
-                </p>
-                <div className="space-y-2">
-                  {}
-                  <div className="bg-white rounded-lg p-3 border border-purple-200">
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-purple-600" />
-                        <span className="font-mono text-xs font-semibold text-purple-700">👑 ADMIN</span>
-                      </div>
-                      <Button 
-                        type="button"
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleDemoLogin('admin')}
-                        className="h-7 px-3 text-xs bg-purple-600 text-white border-purple-600 hover:bg-purple-700"
-                        disabled={isLoading}
-                      >
-                        Login
-                      </Button>
-                    </div>
-                    <p className="text-[10px] text-slate-600 font-mono pl-6">admin@enernova.id</p>
-                    <p className="text-[9px] text-slate-500 pl-6 mt-1">Full access: Dashboard, Approve/Reject, Manage Users</p>
-                  </div>
-                  
-                  {}
-                  <div className="bg-white rounded-lg p-3 border border-amber-200">
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-amber-600" />
-                        <span className="font-mono text-xs font-semibold text-amber-700">📤 KONTRIBUTOR</span>
-                      </div>
-                      <Button 
-                        type="button"
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleDemoLogin('contributor')}
-                        className="h-7 px-3 text-xs bg-amber-500 text-white border-amber-500 hover:bg-amber-600"
-                        disabled={isLoading}
-                      >
-                        Login
-                      </Button>
-                    </div>
-                    <p className="text-[10px] text-slate-600 font-mono pl-6">kontributor@enernova.id</p>
-                    <p className="text-[9px] text-slate-500 pl-6 mt-1">Upload jurnal (multiple), Track status approval</p>
-                  </div>
-                  
-                  {}
-                  <div className="bg-white rounded-lg p-3 border border-emerald-200">
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex items-center gap-2">
-                        <Leaf className="w-4 h-4 text-emerald-600" />
-                        <span className="font-mono text-xs font-semibold text-emerald-700">👤 USER</span>
-                      </div>
-                      <Button 
-                        type="button"
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleDemoLogin('user')}
-                        className="h-7 px-3 text-xs bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700"
-                        disabled={isLoading}
-                      >
-                        Login
-                      </Button>
-                    </div>
-                    <p className="text-[10px] text-slate-600 font-mono pl-6">peneliti@enernova.id</p>
-                    <p className="text-[9px] text-slate-500 pl-6 mt-1">Chat AI, View charts, Access research database</p>
-                  </div>
-                </div>
-                <p className="text-[10px] text-slate-500 text-center mt-2 pt-2 border-t">
-                  🔑 Password semua role: <span className="font-mono font-bold">admin123, kontributor123, peneliti123</span>
-                </p>
-              </div>
-
-              {}
->>>>>>> 0ebd92d359b7354a31f14c39e12f526d12107384
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold shadow-lg shadow-emerald-600/40 hover:shadow-xl transition-all duration-300"
+                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold shadow-lg shadow-emerald-600/40 hover:shadow-xl transition-all duration-300 py-6"
                 disabled={isLoading}
               >
                 {isLoading ? (
