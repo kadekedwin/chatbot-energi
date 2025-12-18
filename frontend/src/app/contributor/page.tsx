@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAppStore } from '@/lib/store';
 import { useAuth } from '@/contexts/AuthContext';
 import { extractJournalMetadata, isValidAuthorName } from '@/lib/author-extractor';
-import { FileText, Upload, CheckCircle, XCircle, Clock, TrendingUp, Award, LogOut } from 'lucide-react';
+import { FileText, Upload, CheckCircle, XCircle, Clock, TrendingUp, Award, ArrowLeft } from 'lucide-react';
 
 interface Journal {
   id: string;
@@ -69,7 +70,7 @@ const StatusBadge = ({ status }: { status: string }) => {
 };
 
 export default function ContributorPage() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const { journals, addJournal } = useAppStore();
   const [isUploading, setIsUploading] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
@@ -371,6 +372,10 @@ export default function ContributorPage() {
         { }
         <div className="flex justify-between items-start">
           <div className="flex-1">
+            <Link href="/" className="inline-flex items-center text-sm text-slate-500 hover:text-emerald-600 mb-4 transition-colors">
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Kembali ke Beranda
+            </Link>
             <div className="flex items-center gap-3 mb-2">
               <Award className="w-10 h-10 text-emerald-600" />
               <div>
@@ -388,41 +393,31 @@ export default function ContributorPage() {
             </p>
           </div>
 
-          <div className="flex flex-col items-end gap-2">
+          { }
+          <div className="text-right">
+            <input
+              type="file"
+              id="contributor-upload"
+              className="hidden"
+              accept=".pdf,.doc,.docx,.txt"
+              multiple
+              onChange={handleFileUpload}
+              disabled={isUploading}
+            />
             <Button
-              onClick={() => logout()}
-              variant="ghost"
-              size="sm"
-              className="text-slate-500 hover:text-red-600 hover:bg-red-50"
+              onClick={() => document.getElementById('contributor-upload')?.click()}
+              disabled={isUploading}
+              className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl hover:shadow-2xl transition-all text-base px-6 py-6"
             >
-              <LogOut className="w-4 h-4 mr-2" />
-              Keluar
+              <Upload className="w-5 h-5 mr-2" />
+              {isUploading ? '⏳ Uploading...' : 'Upload Jurnal Baru'}
             </Button>
-            <div className="text-right">
-              <input
-                type="file"
-                id="contributor-upload"
-                className="hidden"
-                accept=".pdf,.doc,.docx,.txt"
-                multiple
-                onChange={handleFileUpload}
-                disabled={isUploading}
-              />
-              <Button
-                onClick={() => document.getElementById('contributor-upload')?.click()}
-                disabled={isUploading}
-                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl hover:shadow-2xl transition-all text-base px-6 py-6"
-              >
-                <Upload className="w-5 h-5 mr-2" />
-                {isUploading ? '⏳ Uploading...' : 'Upload Jurnal Baru'}
-              </Button>
-              <p className="text-xs text-slate-500 mt-2">
-                💡 <strong>Tip:</strong> Gunakan <kbd className="px-2 py-1 bg-slate-200 rounded text-xs font-mono">Ctrl+A</kbd> untuk memilih semua file
-              </p>
-              <p className="text-xs text-emerald-600 mt-1 font-medium">
-                ✓ Mendukung: PDF, DOC, DOCX, TXT (max 10MB/file)
-              </p>
-            </div>
+            <p className="text-xs text-slate-500 mt-2">
+              💡 <strong>Tip:</strong> Gunakan <kbd className="px-2 py-1 bg-slate-200 rounded text-xs font-mono">Ctrl+A</kbd> untuk memilih semua file
+            </p>
+            <p className="text-xs text-emerald-600 mt-1 font-medium">
+              ✓ Mendukung: PDF, DOC, DOCX, TXT (max 10MB/file)
+            </p>
           </div>
         </div>
 

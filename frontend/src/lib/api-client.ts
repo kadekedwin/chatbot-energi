@@ -30,7 +30,7 @@ apiClient.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
-    
+
     // Debug log untuk development
     if (process.env.NODE_ENV === 'development') {
       console.log('📤 API Request:', {
@@ -40,7 +40,7 @@ apiClient.interceptors.request.use(
         fullURL: `${config.baseURL}${config.url}`
       });
     }
-    
+
     return config;
   },
   (error) => {
@@ -72,11 +72,18 @@ apiClient.interceptors.response.use(
     const status = error.response.status;
 
     if (status === 401) {
-      console.warn('⚠️ Unauthorized - Redirecting to login');
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
+      // Don't redirect if we are already on the login page or if this is a login attempt
+      // This allows the login component to handle the error and show it to the user
+      const isLoginRequest = error.config?.url?.includes('/auth/login');
+      const isLoginPage = typeof window !== 'undefined' && window.location.pathname === '/login';
+
+      if (!isLoginRequest && !isLoginPage) {
+        console.warn('⚠️ Unauthorized - Redirecting to login');
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+        }
       }
     }
 
@@ -176,9 +183,9 @@ export const journalAPI = {
 
 export const chatAPI = {
   sendMessage: async (message: string, conversationHistory?: any[]) => {
-    const response = await apiClient.post('/chat', { 
-      message, 
-      conversationHistory 
+    const response = await apiClient.post('/chat', {
+      message,
+      conversationHistory
     });
     return response.data;
   },
@@ -203,11 +210,11 @@ export const handleAPIError = (error: any): string => {
     if (!error.response) {
       return 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
     }
-    
-    const message = error.response?.data?.error || 
-                   error.response?.data?.message || 
-                   error.message;
-    
+
+    const message = error.response?.data?.error ||
+      error.response?.data?.message ||
+      error.message;
+
     switch (error.response?.status) {
       case 400:
         return `Data tidak valid: ${message}`;
@@ -223,6 +230,6 @@ export const handleAPIError = (error: any): string => {
         return message || 'Terjadi kesalahan tidak terduga.';
     }
   }
-  
+
   return 'Terjadi kesalahan tidak terduga.';
 };
