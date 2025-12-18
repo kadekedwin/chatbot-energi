@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useAppStore } from '@/lib/store';
 import { useAuth } from '@/contexts/AuthContext';
 import { extractJournalMetadata, isValidAuthorName } from '@/lib/author-extractor';
-import { FileText, Upload, CheckCircle, XCircle, Clock, TrendingUp, Award } from 'lucide-react';
+import { FileText, Upload, CheckCircle, XCircle, Clock, TrendingUp, Award, LogOut } from 'lucide-react';
 
 interface Journal {
   id: string;
@@ -69,7 +69,7 @@ const StatusBadge = ({ status }: { status: string }) => {
 };
 
 export default function ContributorPage() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { journals, addJournal } = useAppStore();
   const [isUploading, setIsUploading] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
@@ -98,10 +98,10 @@ export default function ContributorPage() {
         second: '2-digit'
       }));
     };
-    
+
     updateTime();
     const interval = setInterval(updateTime, 1000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
@@ -125,7 +125,7 @@ export default function ContributorPage() {
       reader.onload = (event) => {
         const content = event.target?.result as string;
         const extracted = extractJournalMetadata(content || '');
-        
+
         setUploadFormData({
           title: file.name.replace(/\.[^/.]+$/, ''),
           author: isValidAuthorName(extracted.author) ? extracted.author : '',
@@ -138,9 +138,9 @@ export default function ContributorPage() {
         });
         setShowUploadModal(true);
       };
-      
+
       reader.onerror = () => {
-        
+
         setUploadFormData({
           title: file.name.replace(/\.[^/.]+$/, ''),
           author: '',
@@ -153,31 +153,31 @@ export default function ContributorPage() {
         });
         setShowUploadModal(true);
       };
-      
+
       reader.readAsText(file);
       e.target.value = '';
       return;
     }
 
     setIsUploading(true);
-    
+
     let successCount = 0;
     let failCount = 0;
     const totalFiles = files.length;
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      
+
       try {
         await new Promise<void>((resolve, reject) => {
           const reader = new FileReader();
-          
+
           reader.onload = async (event) => {
             try {
               const fileContent = event.target?.result as string;
 
               const extracted = extractJournalMetadata(fileContent || '');
-              
+
               const newJournal = {
                 filename: file.name,
                 title: file.name.replace(/\.[^/.]+$/, ''),
@@ -190,7 +190,7 @@ export default function ContributorPage() {
                 fileSize: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
                 contentPreview: fileContent.substring(0, 5000)
               };
-              
+
               addJournal(newJournal);
               successCount++;
               resolve();
@@ -254,14 +254,14 @@ export default function ContributorPage() {
         }
       </style>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
       notification.style.animation = 'slideOut 0.3s ease-in';
       setTimeout(() => notification.remove(), 300);
     }, 5000);
-    
+
     setIsUploading(false);
     e.target.value = '';
   };
@@ -287,7 +287,7 @@ export default function ContributorPage() {
         const newJournal = {
           filename: file.name,
           title: uploadFormData.title || file.name.replace(/\.[^/.]+$/, ''),
-          detectedAuthor: uploadFormData.author, 
+          detectedAuthor: uploadFormData.author,
           authorInstitution: uploadFormData.authorInstitution || 'Not specified',
           publicationYear: uploadFormData.publicationYear || new Date().getFullYear().toString(),
           journalSource: uploadFormData.journalSource || 'Unknown',
@@ -367,8 +367,8 @@ export default function ContributorPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        
-        {}
+
+        { }
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
@@ -387,36 +387,46 @@ export default function ContributorPage() {
               {currentTime}
             </p>
           </div>
-          
-          {}
-          <div className="text-right">
-            <input
-              type="file"
-              id="contributor-upload"
-              className="hidden"
-              accept=".pdf,.doc,.docx,.txt"
-              multiple
-              onChange={handleFileUpload}
-              disabled={isUploading}
-            />
-            <Button 
-              onClick={() => document.getElementById('contributor-upload')?.click()}
-              disabled={isUploading}
-              className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl hover:shadow-2xl transition-all text-base px-6 py-6"
+
+          <div className="flex flex-col items-end gap-2">
+            <Button
+              onClick={() => logout()}
+              variant="ghost"
+              size="sm"
+              className="text-slate-500 hover:text-red-600 hover:bg-red-50"
             >
-              <Upload className="w-5 h-5 mr-2" />
-              {isUploading ? '⏳ Uploading...' : 'Upload Jurnal Baru'}
+              <LogOut className="w-4 h-4 mr-2" />
+              Keluar
             </Button>
-            <p className="text-xs text-slate-500 mt-2">
-              💡 <strong>Tip:</strong> Gunakan <kbd className="px-2 py-1 bg-slate-200 rounded text-xs font-mono">Ctrl+A</kbd> untuk memilih semua file
-            </p>
-            <p className="text-xs text-emerald-600 mt-1 font-medium">
-              ✓ Mendukung: PDF, DOC, DOCX, TXT (max 10MB/file)
-            </p>
+            <div className="text-right">
+              <input
+                type="file"
+                id="contributor-upload"
+                className="hidden"
+                accept=".pdf,.doc,.docx,.txt"
+                multiple
+                onChange={handleFileUpload}
+                disabled={isUploading}
+              />
+              <Button
+                onClick={() => document.getElementById('contributor-upload')?.click()}
+                disabled={isUploading}
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-xl hover:shadow-2xl transition-all text-base px-6 py-6"
+              >
+                <Upload className="w-5 h-5 mr-2" />
+                {isUploading ? '⏳ Uploading...' : 'Upload Jurnal Baru'}
+              </Button>
+              <p className="text-xs text-slate-500 mt-2">
+                💡 <strong>Tip:</strong> Gunakan <kbd className="px-2 py-1 bg-slate-200 rounded text-xs font-mono">Ctrl+A</kbd> untuk memilih semua file
+              </p>
+              <p className="text-xs text-emerald-600 mt-1 font-medium">
+                ✓ Mendukung: PDF, DOC, DOCX, TXT (max 10MB/file)
+              </p>
+            </div>
           </div>
         </div>
 
-        {}
+        { }
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="border-t-4 border-t-emerald-600 shadow-lg hover:shadow-xl transition-shadow">
             <CardHeader className="pb-2">
@@ -471,7 +481,7 @@ export default function ContributorPage() {
           </Card>
         </div>
 
-        {}
+        { }
         {stats.approved >= 5 && (
           <Card className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-300">
             <CardContent className="p-4">
@@ -490,7 +500,7 @@ export default function ContributorPage() {
           </Card>
         )}
 
-        {}
+        { }
         <Card className="shadow-xl border-2 border-emerald-100">
           <CardHeader className="border-b bg-gradient-to-r from-emerald-50 to-teal-50">
             <CardTitle className="flex items-center gap-2 text-emerald-700">
@@ -514,7 +524,7 @@ export default function ContributorPage() {
                   <p className="text-slate-600 mb-6 max-w-md mx-auto">
                     Mulai kontribusi dengan upload jurnal penelitian energi terbarukan Anda sekarang!
                   </p>
-                  <Button 
+                  <Button
                     onClick={() => document.getElementById('contributor-upload')?.click()}
                     className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
                   >
@@ -535,8 +545,8 @@ export default function ContributorPage() {
                             <h3 className="font-semibold text-lg text-slate-900 mb-2">
                               {journal.title}
                             </h3>
-                            
-                            {}
+
+                            { }
                             {journal.detectedAuthor && (
                               <div className="mb-2">
                                 <span className="font-medium text-emerald-700 text-base">
@@ -554,7 +564,7 @@ export default function ContributorPage() {
                                 )}
                               </div>
                             )}
-                            
+
                             <div className="flex flex-wrap items-center gap-4 text-sm text-slate-600 mb-3">
                               <span className="flex items-center gap-1">
                                 👤 Diupload: <strong>{journal.uploader?.name || 'Unknown'}</strong>
@@ -574,7 +584,7 @@ export default function ContributorPage() {
                               </span>
                             </div>
                             <StatusBadge status={journal.status} />
-                            
+
                             {journal.status === 'pending' && (
                               <p className="text-xs text-slate-500 mt-2 italic">
                                 ⏱️ Sedang dalam review oleh admin. Estimasi: 24 jam
@@ -601,7 +611,7 @@ export default function ContributorPage() {
           </CardContent>
         </Card>
 
-        {}
+        { }
         <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
           <CardContent className="p-6">
             <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
@@ -623,11 +633,11 @@ export default function ContributorPage() {
 
       </div>
 
-      {}
+      { }
       {showUploadModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            {}
+            { }
             <div className="sticky top-0 bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-6 rounded-t-2xl">
               <h2 className="text-2xl font-bold flex items-center gap-2">
                 <Upload className="w-6 h-6" />
@@ -638,9 +648,9 @@ export default function ContributorPage() {
               </p>
             </div>
 
-            {}
+            { }
             <div className="p-6 space-y-4">
-              {}
+              { }
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">
                   📌 Judul Jurnal
@@ -654,7 +664,7 @@ export default function ContributorPage() {
                 />
               </div>
 
-              {}
+              { }
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">
                   ✍️ Penulis Asli Jurnal <span className="text-red-500">*</span>
@@ -672,7 +682,7 @@ export default function ContributorPage() {
                 </p>
               </div>
 
-              {}
+              { }
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">
                   🏛️ Institusi Penulis
@@ -686,7 +696,7 @@ export default function ContributorPage() {
                 />
               </div>
 
-              {}
+              { }
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -714,7 +724,7 @@ export default function ContributorPage() {
                 </div>
               </div>
 
-              {}
+              { }
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">
                   🔗 DOI (Digital Object Identifier)
@@ -728,7 +738,7 @@ export default function ContributorPage() {
                 />
               </div>
 
-              {}
+              { }
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">
                   📥 Link Download PDF (Opsional)
@@ -742,7 +752,7 @@ export default function ContributorPage() {
                 />
               </div>
 
-              {}
+              { }
               <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                 <p className="text-sm text-slate-600">
                   📄 <strong>File:</strong> {uploadFormData.file?.name}
@@ -755,16 +765,16 @@ export default function ContributorPage() {
                 </p>
               </div>
 
-              {}
+              { }
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-blue-800">
-                  <strong>ℹ️ Catatan:</strong> Field bertanda <span className="text-red-500">*</span> wajib diisi. 
+                  <strong>ℹ️ Catatan:</strong> Field bertanda <span className="text-red-500">*</span> wajib diisi.
                   Metadata yang lengkap akan mempercepat proses review oleh admin.
                 </p>
               </div>
             </div>
 
-            {}
+            { }
             <div className="flex gap-3 p-6 bg-slate-50 rounded-b-2xl">
               <Button
                 onClick={() => {
