@@ -6,22 +6,19 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Seeding database...');
 
-  const existingUsers = await prisma.user.count();
-  if (existingUsers > 0) {
-    console.log('⚠️  Database already seeded. Skipping...');
-    return;
-  }
-
+  // Ensure Admin exists
   const adminPassword = await bcrypt.hash('admin123', 10);
-  const admin = await prisma.user.create({
-    data: {
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@enernova.id' },
+    update: {}, // Don't update if exists
+    create: {
       name: 'Admin EnerNova',
       email: 'admin@enernova.id',
       password: adminPassword,
       role: 'ADMIN'
     }
   });
-  console.log('✅ Created admin user:', admin.email);
+  console.log('✅ ensured admin user:', admin.email);
 
   const contributorPassword = await bcrypt.hash('kontributor123', 10);
   const contributor = await prisma.user.create({
