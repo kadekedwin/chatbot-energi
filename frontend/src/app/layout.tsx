@@ -1,36 +1,38 @@
-'use client';
+import type { Metadata } from "next";
+import localFont from "next/font/local";
+import "./globals.css";
+// 1. IMPORT AUTH PROVIDER (Pastikan path ini benar)
+import { AuthProvider } from "@/contexts/AuthContext";
 
-import React, { useState } from 'react';
-import { Sidebar } from '@/components/sidebar';
-import ProtectedRoute from '@/components/ProtectedRoute'; // Pastikan path import ini benar (tanpa /auth)
-import { MobileHeader } from '@/components/mobile-header'; // Opsional, hapus jika belum punya
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
+});
 
-export default function AdminLayout({
+export const metadata: Metadata = {
+  title: "EnerNova",
+  description: "Platform AI Energi Terbarukan",
+};
+
+export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+}>) {
   return (
-    <ProtectedRoute requireAdmin={true}>
-      <div className="flex h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50">
-        {/* Sidebar Desktop & Mobile */}
-        <Sidebar 
-          isOpen={isSidebarOpen} 
-          onClose={() => setIsSidebarOpen(false)} 
-        />
-
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Header Mobile (Hanya muncul di HP) */}
-          <MobileHeader onMenuClick={() => setIsSidebarOpen(true)} />
-
-          {/* Konten Utama Admin */}
-          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-transparent p-4 md:p-6 transition-all duration-300">
-            {children}
-          </main>
-        </div>
-      </div>
-    </ProtectedRoute>
+    <html lang="id">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* 2. BUNGKUS APLIKASI DENGAN AUTHPROVIDER */}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
+    </html>
   );
 }
