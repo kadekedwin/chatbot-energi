@@ -5,7 +5,7 @@ const prisma = require('../config/database');
 exports.sendMessage = async (req, res, next) => {
   try {
     const { message, conversationHistory } = req.body;
-    
+
     if (!message) {
       return res.status(400).json({
         status: 'error',
@@ -23,7 +23,7 @@ exports.sendMessage = async (req, res, next) => {
           { contentPreview: { contains: searchLower } }
         ]
       },
-      take: 5, 
+      take: 5,
       select: {
         title: true,
         detectedAuthor: true,
@@ -70,19 +70,19 @@ exports.sendMessage = async (req, res, next) => {
     const messages = [
       { role: 'system', content: systemPrompt },
       ...(conversationHistory || []),
-      { 
-        role: 'user', 
-        content: contextInfo + message 
+      {
+        role: 'user',
+        content: contextInfo + message
       }
     ];
 
     const response = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
       {
-        model: 'llama-3.3-70b-versatile', 
+        model: 'llama-3.3-70b-versatile',
         messages: messages,
         temperature: 0.7,
-        max_tokens: 800, 
+        max_tokens: 800,
         top_p: 0.9
       },
       {
@@ -90,14 +90,14 @@ exports.sendMessage = async (req, res, next) => {
           'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
           'Content-Type': 'application/json'
         },
-        timeout: 15000 
+        timeout: 15000
       }
     );
-    
+
     const aiResponse = response.data.choices[0].message.content;
-    
+
     logger.info(`Chat processed - User: ${req.user?.email || 'Anonymous'} - Retrieved: ${journals.length} journals`);
-    
+
     res.json({
       status: 'success',
       data: {
@@ -110,24 +110,43 @@ exports.sendMessage = async (req, res, next) => {
         }
       }
     });
-    
+
   } catch (error) {
+    // Enhanced Error Logging
+    console.error('❌ Chat Controller Error Details:', {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      responseData: error.response?.data,
+      apiKeyPresent: !!process.env.GROQ_API_KEY,
+      apiKeyLength: process.env.GROQ_API_KEY ? process.env.GROQ_API_KEY.length : 0
+    });
+
     logger.error('Chat Error:', error.response?.data || error.message);
-    
+
     if (error.response?.status === 401) {
       return res.status(500).json({
         status: 'error',
         message: 'Groq API key is invalid or missing'
       });
     }
-    
+
+    if (error.response?.status === 403) {
+      return res.status(403).json({
+        status: 'error',
+        message: 'Groq API access forbidden. Check quota or API key permissions.',
+        details: error.response?.data
+      });
+    }
+
     if (error.code === 'ECONNABORTED') {
       return res.status(504).json({
         status: 'error',
         message: 'Request timeout - please try again'
       });
     }
-    
+
     next(error);
   }
 };
